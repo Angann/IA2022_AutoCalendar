@@ -4,6 +4,9 @@ import os
 import sys
 
 
+SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+
+
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Auto_Calendar.settings')
@@ -17,6 +20,8 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
-
 if __name__ == '__main__':
     main()
+
+
+

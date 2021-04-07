@@ -1,7 +1,19 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 def index(request):
-    return HttpResponse("Hey x")
+    if request.user.is_authenticated:
+        return render(request, "user/step2.html")
+    return render(request, "user/step1.html")
+
+def logout_view(request):
+    logout(request)
+    return render(request, "user/step1.html")
+
+def redirect_view(request):
+    return HttpResponseRedirect('user')
+
+
 
