@@ -26,54 +26,11 @@
         {% endif %}
     </div>
 
-    <div id = "thing">
+    <div>
         <form id = "userScheduleInput" method = "post" name = "userform">
             {% csrf_token %}
             <script type="text/javascript" src = "{% static 'js/userform.js' %}"></script>
-
         </form>
-
-        <p id = "please">
-            <h1>terrible peple</h1>
-        </p>
-
-        <script type="text/javascript" src = "{% static 'js/userform.js' %}"></script>
-
-        <!--<script>
-            var form = document.createElement("form");
-    form.setAttribute("method", "post");
-    form.setAttribute("action", "submit.php");
-
-    // Create an input element for emailID
-    var ID = document.createElement("input");
-    ID.setAttribute("type", "text");
-    ID.setAttribute("name", "emailID");
-    ID.setAttribute("placeholder", "E-Mail IDddd");
-
-    // Create an input element for password
-    var PWD = document.createElement("input");
-    PWD.setAttribute("type", "password");
-    PWD.setAttribute("name", "password");
-    PWD.setAttribute("placeholder", "Password");
-
-    // Create a submit button
-    var s = document.createElement("input");
-    s.setAttribute("type", "submit");
-    s.setAttribute("value", "Submit");
-
-    // Append the email_ID input to the form
-    form.append(ID);
-
-    // Append the password to the form
-    form.append(PWD);
-
-    // Append the button to the form
-    form.append(s);
-
-
-    document.getElementById("please").appendChild(form);
-        </script>
-        -->
     </div>
 
 </body>
