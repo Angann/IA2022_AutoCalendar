@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 # Create your views here.
 def index(request):
     if request.user.is_authenticated:
-        return render(request, "user/step2.html")
+        return render(request, "user/index.html")
     return render(request, "user/step1.html")
 
 def logout_view(request):
