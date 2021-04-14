@@ -1,28 +1,21 @@
+----- WORKS LATEST
 
-    for (i = 0; i < daysNum; i++) 
-    {
-        let row = table.insertRow();
-        row.setAttribute("scope", "row");
-        let rowLabel = row.insertCell();
-        let cycledayName = document.createTextNode(cycledayNames[i]);
-        rowLabel.appendChild(cycledayName);
-        for (j = 0; j < periodNum; j++)
-        {
-            let inputCell = row.insertCell();
-            let inputField = document.createElement("input");
-            inputField.setAttribute("type", "text");
-            inputField.setAttribute("name", "day-" + i + "-period-" + j);
-            inputField.setAttribute("maxlength", 50);
-            inputField.setAttribute("class", "");
-            inputCell.appendChild(inputField);
-            form.append(inputField);
-        }
-    }
+var periodNum = 4;
+var daysNum = 8;
+var cycledayNames = ["A1", "B1", "A2", "B2", "A3", "B3", "A4", "B4"];
 
-    table = document.createElement("table");
+function createTableForm() {
 
-  generateTableForm(table, form);
+    var form = document.getElementById("userScheduleInput");
 
+
+    var table = document.createElement("table");
+    generateTableForm(table, form);
+    
+
+    form.append(table);
+
+}
 
 
 function generateTableForm(table, form)
@@ -34,23 +27,41 @@ function generateTableForm(table, form)
     th.appendChild(text);
     th.setAttribute("scope", "col");
     columnHeadings.appendChild(th);
+    
     for (i = 0; i < periodNum; i++) 
     {
         let th = document.createElement("th");
-        let text = document.createTextNode("Period" + (i+1));
+        let text = document.createTextNode("Period " + (i+1));
         th.appendChild(text);
         th.setAttribute("scope", "col");
-        row.appendChild(th);
+        columnHeadings.appendChild(th);
+    }
+
+    for (i = 0; i < daysNum; i++) 
+    {
+        let row = table.insertRow();
+        row.setAttribute("scope", "row");
+        let rowLabel = row.insertCell();
+        let cycledayName = document.createTextNode(cycledayNames[i]);
+        rowLabel.appendChild(cycledayName);
+        
+        for (j = 0; j < periodNum; j++)
+        {
+            let inputCell = row.insertCell();
+            let inputField = document.createElement("input");
+            inputField.setAttribute("type", "text");
+            inputField.setAttribute("name", "day-" + (i+1) + "-period-" + (j+1));
+            inputField.setAttribute("maxlength", 50);
+            inputField.setAttribute("class", "");
+            inputCell.appendChild(inputField);
+        }
     }
 
 }
 
-function maketextnode(){
-    var sometext = document.createElement("H1");
-    var t = document.createTextNode("This is a paragraph.");
-    sometext.appendChild(t);
-    document.form.appendChild(sometext);
-}
+
+createTableForm();
+
 
 ------IT WORKS----
 var periodNum = 4;
