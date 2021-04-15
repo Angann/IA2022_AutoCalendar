@@ -8,6 +8,6 @@ urlpatterns = [
     #path('', TemplateView.as_view(template_name="user/step1.html")),
     #path('logout', LogoutView.as_view())
     path('', views.index),
-    path('accounts/', include('allauth.urls')),
-    path('logout/', views.logout_view, name='logout')
+    #path('accounts/', include('allauth.urls')),
+    #path('logout/', views.logout_view, name='logout')
 ]

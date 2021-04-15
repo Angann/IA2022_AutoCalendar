@@ -10,16 +10,6 @@ function createTableForm() {
     table.setAttribute("class", "table table-bordered table-responsive");
     generateTableForm(table);
 
-    /*
-    var button = document.createElement("button");
-    let text = document.createTextNode("Import To Google Calendar");   
-    button.appendChild(text); 
-    button.setAttribute("type", "submit");
-    button.setAttribute("value", "Submit");
-    button.setAttribute("class", "btn btn-primary padding");
-
-    form.append(button);
-    */
     form.append(table);
 
 }
@@ -58,7 +48,7 @@ function generateTableForm(table)
             let inputCell = row.insertCell();
             let inputField = document.createElement("input");
             inputField.setAttribute("type", "text");
-            inputField.setAttribute("name", "day-" + (i+1) + "-period-" + (j+1));
+            inputField.setAttribute("id", "day-" + (i+1) + "-period-" + (j+1));
             inputField.setAttribute("maxlength", 50);
             inputField.setAttribute("class", "border rounded");
             inputCell.appendChild(inputField);
@@ -71,3 +61,5 @@ function generateTableForm(table)
 
 
 createTableForm();
+
+//export { createTableForm, generateTableForm, periodNum, daysNum, cycledayNames };

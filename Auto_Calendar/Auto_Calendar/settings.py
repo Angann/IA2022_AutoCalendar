@@ -32,10 +32,10 @@ ALLOWED_HOSTS = ['127.0.0.1', 'cisautocalendar.herokuapp.com', 'localhost']
 
 INSTALLED_APPS = [
     'user',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    #'allauth',
+    #'allauth.account',
+    #'allauth.socialaccount',
+    #'allauth.socialaccount.providers.google',
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',

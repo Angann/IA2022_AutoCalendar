@@ -15,33 +15,50 @@
         CIS AUTO CALENDAR
         </h1>
     </div>
+
     <br>
+
     <div class = "container-fluid">
         {% block body %}
 
         {% endblock %}
-
-        {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}">Logout</a>
-        {% endif %}
     </div>
 
     <div class = "d-flex justify-content-center">
         <form id = "userScheduleInput" method = "post" name = "userform">
             {% csrf_token %}
             <script type="text/javascript" src = "{% static 'js/userform.js' %}"></script>
-
             <div class="form-check">
                 <input id="userImportDays" class="form-check-input" type="checkbox" value="" >
                 <label class="form-check-label" for="userImportDays">Import Cycle Day Events</label>
             </div>
 
             <div style = "padding-top:10px">
-                <button id = "userSubmitButton" class="btn btn-primary" type="sumbit" value = "Submit">Import to Google Calendar</button>
+                <button id = "userSubmitButton" class="btn btn-primary" type="button" onclick="submitForm()">Import to Google Calendar</button>
             </div>
 
         </form>
     </div>
 
+    <br>
+
+    <div class ="mx-auto" style = "width: 300px; text-align: center">
+        <p id = "testing" style = "display:none"> Original
+        </p>
+
+        <button id = "authorize_button" style = "display: none;" class="btn btn-primary">Authorize</button>
+        <button id = "signout_button" style = "display: none;" class = "btn btn-primary" >Sign Out</button>
+        <br>
+
+        <pre id="content" ></pre>
+
+
+    </div>
+
+    <script type="text/javascript" src = "{% static 'js/importSchedule.js' %}"></script>
+    <script async defer src="https://apis.google.com/js/api.js"
+      onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
 </body>
 </html>
