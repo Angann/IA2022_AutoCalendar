@@ -4,8 +4,27 @@ var periodNum = 4;
 var daysNum = 8;
 var cycledayNames = ["A1", "B1", "A2", "B2", "A3", "B3", "A4", "B4"];
 var userInputs = [];
+var fakeUserinputs = [
+    ["Econ", "Econ", "CS", "Chem"],
+    ["2Econ", "2Econ", "2CS", " "],
+    ["3Econ", "3Econ", "3CS", "3Chem"],
+    ["E4con", "4Econ", "4CS", "4Chem"],
+    ["5Econ", "5Econ", "5CS", "5Chem"],
+    ["6Econ", "6Econ", "6CS", "C6hem"],
+    ["7Econ", "7Econ", "7CS", "7Chem"],
+    ["8Econ", "8Econ", "8CS", "8Chem"]
+];
 var userSchedule;
-var periodTimes = ["7:55", "9:00", "9:05", "10:10", "11:15", "12:20", "12:40", "1:45"];
+var periodTimes = ["7:55", "9:00", "9:05", "10:10", "11:15", "12:20", "12:40", "13:45"];
+var fakeCSVData = {
+    "A1":"24/5/2021",
+    "B1":"25/5/2021",
+    "A2":"26/5/2021",
+    "B2":"27/5/2021",
+    "A3":"28/5/2021",
+    "B3":"31/5/2021",
+    "A4":"1/6/2021",
+    "B4":"2/6/2021"};
 
 function submitForm()
 {
@@ -18,8 +37,8 @@ function submitForm()
         userInputs.push(periodInputs);
         
     }
-    generateSchedule(userInputs);
-    importToCalendar();
+    generateSchedule(fakeUserinputs);
+    importToCalendar(userSchedule);
     //document.getElementById("testing").innerHTML = userSchedule.createOutputString();
 }
 
@@ -39,6 +58,15 @@ class Schedule {
             let newDay = new CycleDay(input, i);
             this.days.push(newDay);
         }
+    }
+
+    getDay(cycleDayName){
+        for (var i = 0; i<this.days.length ; i++){
+            if(this.days[i].dayName == cycleDayName){
+                return this.days[i];
+            }
+        }
+        return "ERROR: day not found";
     }
 
     createOutputString(){
@@ -139,7 +167,7 @@ var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
@@ -203,20 +231,51 @@ function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
 }
 
-function importToCalendar(){
-    var eventResource = {
-        'summary': 'Google I/O 2015',
-        'start': {
-          'dateTime': '2021-05-01T07:55:00+08:00'
-            },
-        'end': {
-          'dateTime': '2021-05-01T9:00:00+08:00'
+function importToCalendar(schedule){
+    for(var cycleDay in fakeCSVData) {
+        var date = fakeCSVData[cycleDay];
+        var scheduleDay = schedule.getDay(cycleDay);
+        for(var i = 0; i< scheduleDay.periods.length; i++){
+            var schedulePeriod = scheduleDay.periods[i];
+            if (!schedulePeriod.freePeriod)
+            {
+                var dateInput = makeDateString(date);
+                var eventResource = {
+                    'summary': schedulePeriod.className,
+                    'start': {
+                        'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:00'
+                        },
+                    'end': {
+                        'dateTime': dateInput + 'T'+ schedulePeriod.endTime +':00+08:00'
+                    }
+                };
+                var request = gapi.client.calendar.events.insert({
+                    'calendarId': 'c_mn040gr3hs5f31h6q0lko06t4s@group.calendar.google.com',
+                    'resource': eventResource
+                });
+                request.execute();
+
+                console.log(schedulePeriod.className + ": " + dateInput + 'T' + schedulePeriod.startTime+':00+08:00');
+            }
         }
-      };
-    gapi.client.calendar.events.insert({
-        'calendarId': 'primary',
-        'resource': eventResource
-      });
+    }
+}
+
+function makeDateString(date){
+    var ISODate = "";
+    var split = date.split("/");
+    for(var i = 2; i> -1; i--){
+    if(i!=0 && split[i].length <2){
+        ISODate += "0"+ split[i];
+    }
+    else{
+        ISODate += split[i];
+    }
+    if(i != 0){
+        ISODate += "-";
+    }
+    }
+    return ISODate;
 }
 
 //export {periodNum, daysNum, cycledayNames, userInputs, CLIENT_ID, API_KEY, DISCOVERY_DOCS, SCOPES, authorizeButton, signoutButton, handleClientLoad, initClient, updateSigninStatus, handleAuthClick, handleSignoutClick};

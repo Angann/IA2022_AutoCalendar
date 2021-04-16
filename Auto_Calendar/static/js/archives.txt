@@ -1,3 +1,18 @@
+var eventResource = {
+        'summary': 'Google I/O 2015',
+        'start': {
+          'dateTime': '2021-05-01T07:55:00+08:00' 
+            },
+        'end': {
+          'dateTime': '2021-05-01T9:00:00+08:00'
+        }
+      };
+    var request = gapi.client.calendar.events.insert({
+        'calendarId': 'primary',
+        'resource': eventResource
+      });
+    request.execute();
+
 ----- WORKS LATEST
 
 var periodNum = 4;
