@@ -39,6 +39,7 @@ function submitForm()
     }
     generateSchedule(fakeUserinputs);
     importToCalendar(userSchedule);
+    window.location.href = 'https://calendar.google.com/';
     //document.getElementById("testing").innerHTML = userSchedule.createOutputString();
 }
 
@@ -171,7 +172,8 @@ var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
-
+var step1Div = document.getElementById("loginDiv");
+var step2Div = document.getElementById("inputDiv");
 
 /**
  *  On load, called to load the auth2 library and API client library.
@@ -199,7 +201,7 @@ function initClient() {
     authorizeButton.onclick = handleAuthClick;
     signoutButton.onclick = handleSignoutClick;
   }, function(error) {
-    appendPre(JSON.stringify(error, null, 2));
+    //appendPre(JSON.stringify(error, null, 2));
   });
 }
 
@@ -211,9 +213,11 @@ function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
+    step2Div.style.display = 'block';
   } else {
     authorizeButton.style.display = 'block';
     signoutButton.style.display = 'none';
+    step2Div.style.display = 'none';
   }
 }
 
@@ -250,7 +254,7 @@ function importToCalendar(schedule){
                     }
                 };
                 var request = gapi.client.calendar.events.insert({
-                    'calendarId': 'c_mn040gr3hs5f31h6q0lko06t4s@group.calendar.google.com',
+                    'calendarId': 'c_kg9ivqghvq2vlga8esuup670e4@group.calendar.google.com',
                     'resource': eventResource
                 });
                 request.execute();
@@ -265,15 +269,15 @@ function makeDateString(date){
     var ISODate = "";
     var split = date.split("/");
     for(var i = 2; i> -1; i--){
-    if(i!=0 && split[i].length <2){
-        ISODate += "0"+ split[i];
-    }
-    else{
-        ISODate += split[i];
-    }
-    if(i != 0){
-        ISODate += "-";
-    }
+        if(i!=0 && split[i].length <2){
+            ISODate += "0"+ split[i];
+        }
+        else{
+            ISODate += split[i];
+        }
+        if(i != 0){
+            ISODate += "-";
+        }
     }
     return ISODate;
 }
