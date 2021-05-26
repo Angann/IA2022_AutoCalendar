@@ -6,6 +6,9 @@ from django.http import HttpResponseRedirect
 def index(request):
     return render(request, "user/index.html")
 
+def manage(request):
+    return render(request, "user/manage.html")
+
 def logout_view(request):
     logout(request)
     return render(request, "user/step1.html")

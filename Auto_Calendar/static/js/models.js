@@ -1,19 +1,4 @@
-class Rectangle {
-    constructor(height, width) {
-      this.height = height;
-      this.width = width;
-    }
-    get area() {
-        return this.calcArea();
-      }
-      // Method
-      calcArea() {
-        return this.height * this.width;
-      }
-  }
-
-//export default Rectangle;
-
+//User Schedule Models/Classes
 class Schedule {
     
     userInput = [];
@@ -88,3 +73,40 @@ class Period {
         this.endTime = time;
     }
 }
+
+//Settings Class
+class Settings {
+    
+    startDate;
+    endDate;
+    cycleNum;
+    periodNum;
+    cycleNames;
+    periodTimes;
+    calendarCSV;
+    
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV)
+    {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.cycleNum = cycleNum
+        this.periodNum = periodNum;
+        this.cycleNames = cycleNames;
+        this.periodTimes = periodTimes;
+        this.calendarCSV = calendarCSV;
+    }
+
+    // setStartTime(time) {
+    //     this.startTime = time;
+    // }
+
+    // setEndTime(time){
+    //     this.endTime = time;
+    // }
+}
+
+
+
+let myVariable = 2;
+
+export {Settings, myVariable};

@@ -1,46 +1,24 @@
-//----------------------USER INPUT AND SCHEUDLE OBJECT CREATOR SECTION---------------------------
-
-var periodNum = 4;
-var daysNum = 8;
-var cycledayNames = ["A1", "B1", "A2", "B2", "A3", "B3", "A4", "B4"];
-var userInputs = [];
-var fakeUserinputs = [
-    ["Econ", "Econ", "CS", "Chem"],
-    ["2Econ", "2Econ", "2CS", " "],
-    ["3Econ", "3Econ", "3CS", "3Chem"],
-    ["E4con", "4Econ", "4CS", "4Chem"],
-    ["5Econ", "5Econ", "5CS", "5Chem"],
-    ["6Econ", "6Econ", "6CS", "C6hem"],
-    ["7Econ", "7Econ", "7CS", "7Chem"],
-    ["8Econ", "8Econ", "8CS", "8Chem"]
-];
-var userSchedule;
-var periodTimes = ["7:55", "9:00", "9:05", "10:10", "11:15", "12:20", "12:40", "13:45"];
-var fakeCSVData = {
-    "A1":"24/5/2021",
-    "B1":"25/5/2021",
-    "A2":"26/5/2021",
-    "B2":"27/5/2021",
-    "A3":"28/5/2021",
-    "B3":"31/5/2021",
-    "A4":"1/6/2021",
-    "B4":"2/6/2021"};
-
-function submitForm()
-{
-    for (i = 0; i < daysNum; i++) 
-    {   var periodInputs = [];
-        for (j = 0; j < periodNum; j++)
-        {
-            periodInputs.push(document.getElementById("day-" + (i+1) + "-period-" + (j+1)).value);        
-        }
-        userInputs.push(periodInputs);
-        
+//import {Settings} from './models.js';
+//Settings Class
+class Settings {
+    
+    startDate;
+    endDate;
+    cycleNum;
+    periodNum;
+    cycleNames;
+    periodTimes;
+    calendarCSV;
+    
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes)
+    {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.cycleNum = cycleNum
+        this.periodNum = periodNum;
+        this.cycleNames = cycleNames;
+        this.periodTimes = periodTimes;
     }
-    generateSchedule(fakeUserinputs);
-    importToCalendar(userSchedule);
-    window.location.href = 'https://calendar.google.com/';
-    //document.getElementById("testing").innerHTML = userSchedule.createOutputString();
 }
 
 class Schedule {
@@ -156,6 +134,109 @@ function generateSchedule(userInputs)
 {
     userSchedule = new Schedule(userInputs);
 }
+//----------------------USER INPUT AND SCHEUDLE OBJECT CREATOR SECTION---------------------------
+
+var firebaseConfig = {
+    apiKey: "AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A",
+    authDomain: "ia2022-autocalendar.firebaseapp.com",
+    projectId: "ia2022-autocalendar",
+    storageBucket: "ia2022-autocalendar.appspot.com",
+    messagingSenderId: "1097932129420",
+    appId: "1:1097932129420:web:21fd9c663d25f4efbd67a9",
+    measurementId: "G-R853YPF8FT"
+  };
+
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+
+// Firestore data converter
+var settingConverter = {
+    toFirestore: function(settings) {
+        return {
+            startDate: settings.startDate,
+            endDate: settings.endDate,
+            cycleNum: settings.cycleNum,
+            periodNum: settings.periodNum,
+            cycleNames: settings.cycleNames,
+            periodTimes: settings.periodTimes,
+            calendarCSV: settings.calendarCSV
+            };
+    },
+    fromFirestore: function(snapshot, options){
+        const data = snapshot.data(options);
+        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV);
+    }
+};
+
+
+
+var startDate;
+var endDate;
+var periodNum;
+var daysNum ;
+var cycledayNames;
+var periodTimes;
+var calendarCSV;
+var userInputs = [];
+var fakeUserinputs = [
+    ["Econ", "Econ", "CS", "Chem"],
+    ["2Econ", "2Econ", "2CS", " "],
+    ["3Econ", "3Econ", "3CS", "3Chem"],
+    ["E4con", "4Econ", "4CS", "4Chem"],
+    ["5Econ", "5Econ", "5CS", "5Chem"],
+    ["6Econ", "6Econ", "6CS", "C6hem"],
+    ["7Econ", "7Econ", "7CS", "7Chem"],
+    ["8Econ", "8Econ", "8CS", "8Chem"]
+];
+var userSchedule;
+var fakeCSVData = {
+    "A1":"24/5/2021",
+    "B1":"25/5/2021",
+    "A2":"26/5/2021",
+    "B2":"27/5/2021",
+    "A3":"28/5/2021",
+    "B3":"31/5/2021",
+    "A4":"1/6/2021",
+    "B4":"2/6/2021"};
+
+db.collection("Manage").doc("settings")
+.withConverter(settingConverter)
+.get().then((doc) => {
+    if (doc.exists){
+    var settings = doc.data();
+    startDate = settings.startDate;
+    endDate = settings.endDate;
+    periodNum = settings.periodNum;
+    daysNum = settings.cycleNum;
+    cycledayNames = settings.cycleNames;
+    periodTimes = settings.periodTimes;
+    calendarCSV = settings.calendarCSV;
+    document.getElementById("testing").innerHTML = periodNum + " - " + daysNum + " - " + cycledayNames + " - " + periodTimes;
+    } else {
+    console.log("No such document!");
+    }}).catch((error) => {
+    console.log("Error getting document:", error);
+});
+
+function submitForm()
+{
+    for (i = 0; i < daysNum; i++) 
+    {   
+        var periodInputs = [];
+        for (j = 0; j < periodNum; j++)
+        {
+            periodInputs.push(document.getElementById("day-" + (i+1) + "-period-" + (j+1)).value);        
+        }
+        userInputs.push(periodInputs);
+        
+    }
+    generateSchedule(fakeUserinputs);
+    importToCalendar(userSchedule, document.getElementById("userImportDays").checked);
+    //window.location.href = 'https://calendar.google.com/';
+    //document.getElementById("testing").innerHTML = document.getElementById("userImportDays").checked;
+}
+
+
 
 // ---------------------API SECTION----------------------
 
@@ -235,9 +316,10 @@ function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
 }
 
-function importToCalendar(schedule){
-    for(var cycleDay in fakeCSVData) {
-        var date = fakeCSVData[cycleDay];
+function importToCalendar(schedule, checked){
+    var calendarID = "c_gihbe02ctcs0o45armrfkau9j0@group.calendar.google.com";
+    for(var date in fakeCSVData) {
+        var cycleDay = fakeCSVData[date];
         var scheduleDay = schedule.getDay(cycleDay);
         for(var i = 0; i< scheduleDay.periods.length; i++){
             var schedulePeriod = scheduleDay.periods[i];
@@ -254,13 +336,29 @@ function importToCalendar(schedule){
                     }
                 };
                 var request = gapi.client.calendar.events.insert({
-                    'calendarId': 'c_kg9ivqghvq2vlga8esuup670e4@group.calendar.google.com',
+                    'calendarId': calendarID,
                     'resource': eventResource
                 });
                 request.execute();
 
                 console.log(schedulePeriod.className + ": " + dateInput + 'T' + schedulePeriod.startTime+':00+08:00');
             }
+        }
+        if(checked){
+            var eventResource = {
+                'summary': cycleDay,
+                'start': {
+                    'date': makeDateString(date)
+                    },
+                'end': {
+                    'date': makeDateString(date)
+                }
+            };
+            var request = gapi.client.calendar.events.insert({
+                'calendarId': calendarID,
+                'resource': eventResource
+            });
+            request.execute();
         }
     }
 }

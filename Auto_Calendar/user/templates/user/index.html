@@ -16,17 +16,10 @@
         </h1>
     </div>
     <br>
-    <p id = "testing" style = "display:none"> Original
-    </p>
-    <div id = "loginDiv" class ="mx-auto" style = "width: 300px; text-align: center; display: block;">
-
-        <button id = "authorize_button" style = "display: none;" class="btn btn-primary">Log Into Google</button>
-        <button id = "signout_button" style = "display: none;" class = "btn btn-primary" >Sign Out</button>
-        <br>
-
-        <pre id="content" ></pre>
-    </div>
+        <p id = "testing" style = "display:none"> Original
+        </p>
     <br>
+
     <div id = "inputDiv" style = "display: none ;">
         <div class = "d-flex justify-content-center" >
             <form id = "userScheduleInput" method = "post" name = "userform">
@@ -42,12 +35,24 @@
             </form>
         </div>
     </div>
+
     <br>
-    <script type="text/javascript" src = "{% static 'js/importSchedule.js' %}"></script>
+
+    <div id = "loginDiv" class ="d-flex justify-content-center">
+        <button id = "authorize_button" style = "display: none;" class="btn btn-primary">Log Into Google</button>
+        <button id = "signout_button" style = "display: none;" class = "btn btn-primary" >Sign Out</button>
+        <br>
+        <pre id="content"></pre>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
     <script async defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
+    <script type="text/javascript" src = "{% static 'js/importSchedule.js' %}"></script>
+
 </body>
 </html>
 
