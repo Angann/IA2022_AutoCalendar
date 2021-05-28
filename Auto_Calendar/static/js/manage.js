@@ -23,7 +23,7 @@ var daysNum ;
 var cycleDayNames;
 var periodTimes;
 var calendarCSV;
-resetSettings(); //HELP
+resetSettings(); 
 const periodNumIn = document.getElementById("periodNum");
 
 periodNumIn.addEventListener('input', createPeriodTableForm);
@@ -277,22 +277,34 @@ async function submitSettings(e){
     }
     let calendarCSV;
     const csvFile = document.getElementById("formFile");
-    e.preventDefault();
-    const input = csvFile.files[0];
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const text = e.target.result;
-        const data = csvToArray(text);
-        calendarCSV = data;
-        var settings = new Settings(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV);
-        pushToFirebase(settings);
-    }; 
-    reader.readAsText(input);
+    if(csvFile.files[0] == null)
+    {
+        db.collection("Manage").doc("settings")
+        .update({
+            "startDate" : startDate, 
+            "endDate" : endDate, 
+            "cycleNum" : cycleNum, 
+            "periodNum" : periodNum, 
+            "cycleNames" : cycleNames, 
+            "periodTimes" : periodTimes
+        });
+    }
+    else{
+        e.preventDefault();
+        const input = csvFile.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const text = e.target.result;
+            const data = csvToArray(text);
+            calendarCSV = data;
+            var settings = new Settings(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV);
+            pushToFirebase(settings);
+        }; 
+        reader.readAsText(input);
+    }
 }
 
 function pushToFirebase(settings){
-    
-    //document.getElementById("testing").innerHTML = startDate + " " + endDate + "-" + periodNum + "-" + cycleNum + "-" + periodTimes + "-" + cycleNames;
     // Set withConverter
     db.collection("Manage").doc("settings")
     .withConverter(settingConverter)

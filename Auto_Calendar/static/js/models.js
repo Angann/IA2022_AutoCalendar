@@ -96,17 +96,15 @@ class Settings {
         this.calendarCSV = calendarCSV;
     }
 
-    // setStartTime(time) {
-    //     this.startTime = time;
-    // }
-
-    // setEndTime(time){
-    //     this.endTime = time;
-    // }
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes)
+    {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.cycleNum = cycleNum
+        this.periodNum = periodNum;
+        this.cycleNames = cycleNames;
+        this.periodTimes = periodTimes;
+    }
 }
 
-
-
-let myVariable = 2;
-
-export {Settings, myVariable};
+export {Settings};

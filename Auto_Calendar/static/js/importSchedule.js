@@ -10,7 +10,7 @@ class Settings {
     periodTimes;
     calendarCSV;
     
-    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes)
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV)
     {
         this.startDate = startDate;
         this.endDate = endDate;
@@ -18,6 +18,7 @@ class Settings {
         this.periodNum = periodNum;
         this.cycleNames = cycleNames;
         this.periodTimes = periodTimes;
+        this.calendarCSV = calendarCSV;
     }
 }
 
@@ -169,7 +170,6 @@ var settingConverter = {
 };
 
 
-
 var startDate;
 var endDate;
 var periodNum;
@@ -211,7 +211,8 @@ db.collection("Manage").doc("settings")
     cycledayNames = settings.cycleNames;
     periodTimes = settings.periodTimes;
     calendarCSV = settings.calendarCSV;
-    document.getElementById("testing").innerHTML = periodNum + " - " + daysNum + " - " + cycledayNames + " - " + periodTimes;
+    console.log("imported");
+    document.getElementById("testing").innerHTML = periodNum + "  " + calendarCSV;
     } else {
     console.log("No such document!");
     }}).catch((error) => {
@@ -317,48 +318,53 @@ function handleSignoutClick(event) {
 }
 
 function importToCalendar(schedule, checked){
-    var calendarID = "c_gihbe02ctcs0o45armrfkau9j0@group.calendar.google.com";
-    for(var date in fakeCSVData) {
-        var cycleDay = fakeCSVData[date];
-        var scheduleDay = schedule.getDay(cycleDay);
-        for(var i = 0; i< scheduleDay.periods.length; i++){
-            var schedulePeriod = scheduleDay.periods[i];
-            if (!schedulePeriod.freePeriod)
-            {
-                var dateInput = makeDateString(date);
+    console.log("importing");
+    var calendarID = "c_129cta5oug116p0bpvmu6gk0sg@group.calendar.google.com";
+    for(var date in calendarCSV) {
+
+        if(checkDateWithinRange(date))
+        {
+            var cycleDay = calendarCSV[date];
+            var scheduleDay = schedule.getDay(cycleDay);
+            for(var i = 0; i< scheduleDay.periods.length; i++){
+                var schedulePeriod = scheduleDay.periods[i];
+                if (!schedulePeriod.freePeriod)
+                {
+                    var dateInput = makeDateString(date);
+                    var eventResource = {
+                        'summary': schedulePeriod.className,
+                        'start': {
+                            'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:00'
+                            },
+                        'end': {
+                            'dateTime': dateInput + 'T'+ schedulePeriod.endTime +':00+08:00'
+                        }
+                    };
+                    var request = gapi.client.calendar.events.insert({
+                        'calendarId': calendarID,
+                        'resource': eventResource
+                    });
+                    retry_(request, 10, 10);
+
+                    //console.log(schedulePeriod.className + ": " + dateInput + 'T' + schedulePeriod.startTime+':00+08:00');
+                }
+            }
+            if(checked){
                 var eventResource = {
-                    'summary': schedulePeriod.className,
+                    'summary': cycleDay,
                     'start': {
-                        'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:00'
+                        'date': makeDateString(date)
                         },
                     'end': {
-                        'dateTime': dateInput + 'T'+ schedulePeriod.endTime +':00+08:00'
+                        'date': makeDateString(date)
                     }
                 };
                 var request = gapi.client.calendar.events.insert({
                     'calendarId': calendarID,
                     'resource': eventResource
                 });
-                request.execute();
-
-                console.log(schedulePeriod.className + ": " + dateInput + 'T' + schedulePeriod.startTime+':00+08:00');
+                retry_(request, 10, 10);
             }
-        }
-        if(checked){
-            var eventResource = {
-                'summary': cycleDay,
-                'start': {
-                    'date': makeDateString(date)
-                    },
-                'end': {
-                    'date': makeDateString(date)
-                }
-            };
-            var request = gapi.client.calendar.events.insert({
-                'calendarId': calendarID,
-                'resource': eventResource
-            });
-            request.execute();
         }
     }
 }
@@ -380,4 +386,78 @@ function makeDateString(date){
     return ISODate;
 }
 
-//export {periodNum, daysNum, cycledayNames, userInputs, CLIENT_ID, API_KEY, DISCOVERY_DOCS, SCOPES, authorizeButton, signoutButton, handleClientLoad, initClient, updateSigninStatus, handleAuthClick, handleSignoutClick};
+function checkDateWithinRange(date){
+    var date = date.split("/"); //Format: DD/MM/YY
+    if(aboveStartDate(date) && belowEndDate(date))
+    {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+function aboveStartDate(date){
+    var startDateArr = startDate.split("-"); //Format: YY-MM-DD
+    if(parseInt(date[2]) > parseInt(startDateArr[0]))
+    {
+        return true;
+    }
+    else if(parseInt(date[2]) == parseInt(startDateArr[0]))
+    {
+        if(parseInt(date[1]) > parseInt(startDateArr[1]))
+        {
+            return true;
+        }
+        else if(parseInt(date[1]) == parseInt(startDateArr[1]))
+        {
+            if(parseInt(date[0]) >= parseInt(startDateArr[2]))
+            {
+                return true;
+            }
+            else{return false}
+        }
+        else{return false}
+    }
+    else{return false;}
+}
+
+function belowEndDate(date){
+    var endDateArr = endDate.split("-"); //Format: YY-MM-DD
+    if(parseInt(date[2]) < parseInt(endDateArr[0]))
+    {
+        return true;
+    }
+    else if(parseInt(date[2]) == parseInt(endDateArr[0]))
+    {
+        if(parseInt(date[1]) < parseInt(endDateArr[1]))
+        {
+            return true;
+        }
+        else if(parseInt(date[1]) == parseInt(endDateArr[1]))
+        {
+            if(parseInt(date[0]) <= parseInt(endDateArr[2]))
+            {
+                return true;
+            }
+            else{return false}
+        }
+        else{return false}
+    }
+    else{return false;}
+}
+
+
+function retry_(request, numRetries, numOriginal) {
+    if(numRetries> 0){
+        setTimeout(() => request.execute(function(event) {
+            if(event.hasOwnProperty('error'))
+            {
+                console.log(event);
+                console.log(numRetries);
+                setTimeout( () => retry_(request, numRetries-1), (Math.pow(2, numOriginal - numRetries)*1000) + (Math.round(Math.random() * 1000)));//added a 0
+            }
+        }), (2000) + (Math.round(Math.random() * 1000)) ); 
+    }       
+}
+
