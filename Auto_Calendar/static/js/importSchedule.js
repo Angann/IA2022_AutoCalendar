@@ -1,141 +1,20 @@
-//import {Settings} from './models.js';
-//Settings Class
-class Settings {
-    
-    startDate;
-    endDate;
-    cycleNum;
-    periodNum;
-    cycleNames;
-    periodTimes;
-    calendarCSV;
-    
-    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV)
-    {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.cycleNum = cycleNum
-        this.periodNum = periodNum;
-        this.cycleNames = cycleNames;
-        this.periodTimes = periodTimes;
-        this.calendarCSV = calendarCSV;
-    }
-}
-
-class Schedule {
-    userInput = [];
-    days = [];
-    
-    constructor(userInput)
-    {
-        this.userInput = userInput;
-        this.createDays(userInput);
-    }
-
-    createDays(userInput){
-        for(var i = 0; i<userInput.length; i++){
-            let input = userInput[i];
-            let newDay = new CycleDay(input, i);
-            this.days.push(newDay);
-        }
-    }
-
-    getDay(cycleDayName){
-        for (var i = 0; i<this.days.length ; i++){
-            if(this.days[i].dayName == cycleDayName){
-                return this.days[i];
-            }
-        }
-        return "ERROR: day not found";
-    }
-
-    createOutputString(){
-        let outputString = "";
-        outputString += "User Input: " + this.userInput + "\n";
-        outputString += "Days: \n";
-        for( i = 0; i < this.days.length; i++)
-        {
-            outputString += "\tDayName: " + this.days[i].dayName + "\n";
-            outputString += "\tPeriods: \n";
-            var periodsLength = this.days[i].periods.length;
-            for( j = 0; j< periodsLength; j++) //.periods.length; i++)
-            {
-                var currPeriod = this.days[i].periods[j];
-                outputString += "\t\tPeriodNum: " + currPeriod.periodNum + "\n";
-                outputString += "\t\t\tClassName: " + currPeriod.className + "\n";
-                outputString += "\t\t\tFree: " + currPeriod.freePeriod + "\n";
-                outputString += "\t\t\tStart: " + currPeriod.startTime + "\n";
-                outputString += "\t\t\tEnd: " + currPeriod.endTime + "\n";
-            }
-        }
-        console.log(outputString);
-        return outputString;
-    }
-
-}
-
-class CycleDay {
-    
-    dayName;
-    dayNum;
-    periods = [];
-    userInput;
-    
-    constructor(userInput, dayNum)
-    {
-        this.userInput = userInput;
-        this.createClasses(userInput);
-        this.dayNum = dayNum;
-        this.dayName = cycledayNames[dayNum];
-    }
-
-    createClasses(input){
-        for(var i = 0; i<input.length; i++){
-            let periodNum = i +1;
-            let className = input[i];
-            let newPeriod = new Period(periodNum, className);
-            newPeriod.setStartTime(periodTimes[periodNum * 2 - 2]);
-            newPeriod.setEndTime(periodTimes[periodNum * 2 - 1]);
-            this.periods.push(newPeriod);
-        }
-    }
-}
-
-class Period {
-    
-    periodNum;
-    className;
-    freePeriod;
-    startTime;
-    endTime;
-    
-    constructor(periodNum, userInput)
-    {
-        this.className = userInput;
-        this.periodNum = periodNum;
-        if(userInput == null || userInput.trim().length == 0)
-        {
-            this.freePeriod = true;
-        }
-        else{
-            this.freePeriod = false;
-        }
-    }
-
-    setStartTime(time) {
-        this.startTime = time;
-    }
-
-    setEndTime(time){
-        this.endTime = time;
-    }
-}
-
-function generateSchedule(userInputs)
-{
-    userSchedule = new Schedule(userInputs);
-}
 //----------------------USER INPUT AND SCHEUDLE OBJECT CREATOR SECTION---------------------------
+
+// Client ID and API key from the Developer Console
+var CLIENT_ID = '1097932129420-mkla5e9ibr6qgok18dvn3ac3f2a4f9in.apps.googleusercontent.com';
+var API_KEY = 'AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A';
+
+// Array of API discovery doc URLs for APIs used by the quickstart
+var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+
+// Authorization scopes required by the API; multiple scopes can be
+// included, separated by spaces.
+var SCOPES = "https://www.googleapis.com/auth/calendar.events";
+
+var authorizeButton = document.getElementById('authorize_button');
+var signoutButton = document.getElementById('signout_button');
+var step1Div = document.getElementById("loginDiv");
+var step2Div = document.getElementById("inputDiv");
 
 var firebaseConfig = {
     apiKey: "AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A",
@@ -169,7 +48,6 @@ var settingConverter = {
     }
 };
 
-
 var startDate;
 var endDate;
 var periodNum;
@@ -178,6 +56,7 @@ var cycledayNames;
 var periodTimes;
 var calendarCSV;
 var userInputs = [];
+var userSchedule;
 var fakeUserinputs = [
     ["Econ", "Econ", "CS", "Chem"],
     ["2Econ", "2Econ", "2CS", " "],
@@ -188,7 +67,6 @@ var fakeUserinputs = [
     ["7Econ", "7Econ", "7CS", "7Chem"],
     ["8Econ", "8Econ", "8CS", "8Chem"]
 ];
-var userSchedule;
 var fakeCSVData = {
     "A1":"24/5/2021",
     "B1":"25/5/2021",
@@ -212,62 +90,78 @@ db.collection("Manage").doc("settings")
     periodTimes = settings.periodTimes;
     calendarCSV = settings.calendarCSV;
     console.log("imported");
-    document.getElementById("testing").innerHTML = periodNum + "  " + calendarCSV;
+    createTableForm();
     } else {
     console.log("No such document!");
     }}).catch((error) => {
     console.log("Error getting document:", error);
 });
 
-function submitForm()
-{
-    for (i = 0; i < daysNum; i++) 
-    {   
-        var periodInputs = [];
-        for (j = 0; j < periodNum; j++)
-        {
-            periodInputs.push(document.getElementById("day-" + (i+1) + "-period-" + (j+1)).value);        
-        }
-        userInputs.push(periodInputs);
-        
-    }
-    generateSchedule(fakeUserinputs);
-    importToCalendar(userSchedule, document.getElementById("userImportDays").checked);
-    //window.location.href = 'https://calendar.google.com/';
-    //document.getElementById("testing").innerHTML = document.getElementById("userImportDays").checked;
+
+// -----------------------FUNCTIONS------------------------
+function createTableForm() {
+
+    var form = document.getElementById("userScheduleInput");
+    var tableDiv = document.getElementById("tableInput");
+
+
+    var table = document.createElement("table");
+    table.setAttribute("class", "table table-bordered table-responsive");
+    generateTableForm(table);
+
+    tableDiv.append(table);
+
 }
 
+function generateTableForm(table)
+{
+    let thead = table.createTHead();
+    let columnHeadings = thead.insertRow();
+    columnHeadings.setAttribute("class", "table-light");
+    let th = document.createElement("th");
+    let text = document.createTextNode("Cycle Day");
+    th.appendChild(text);
+    th.setAttribute("scope", "col");
+    columnHeadings.appendChild(th);
+    
+    for (i = 0; i < periodNum; i++) 
+    {
+        let th = document.createElement("th");
+        let text = document.createTextNode("Period " + (i+1));
+        th.appendChild(text);
+        th.setAttribute("scope", "col");
+        columnHeadings.appendChild(th);
+    }
 
+    for (i = 0; i < daysNum; i++) 
+    {
+        let row = table.insertRow();
+        row.setAttribute("scope", "row");
+        let rowLabel = row.insertCell();
+        let cycledayName = document.createTextNode(cycledayNames[i]);
+        rowLabel.setAttribute("class", "table-light");
+        rowLabel.appendChild(cycledayName);
+        
+        for (j = 0; j < periodNum; j++)
+        {
+            let inputCell = row.insertCell();
+            let inputField = document.createElement("input");
+            inputField.setAttribute("type", "text");
+            inputField.setAttribute("id", "day-" + (i+1) + "-period-" + (j+1));
+            inputField.setAttribute("maxlength", 50);
+            inputField.setAttribute("class", "border rounded");
+            inputCell.appendChild(inputField);
+        }
+    }
+}
 
-// ---------------------API SECTION----------------------
-
-// Client ID and API key from the Developer Console
-var CLIENT_ID = '1097932129420-mkla5e9ibr6qgok18dvn3ac3f2a4f9in.apps.googleusercontent.com';
-var API_KEY = 'AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A';
-
-// Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
-
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/calendar.events";
-
-var authorizeButton = document.getElementById('authorize_button');
-var signoutButton = document.getElementById('signout_button');
-var step1Div = document.getElementById("loginDiv");
-var step2Div = document.getElementById("inputDiv");
-
-/**
- *  On load, called to load the auth2 library and API client library.
- */
+//Functions for the API
+//On load, called to load the auth2 library and API client library.
 function handleClientLoad() {
   gapi.load('client:auth2', initClient);
 }
 
-/**
- *  Initializes the API client library and sets up sign-in state
- *  listeners.
- */
+// Initializes the API client library and sets up sign-in state listeners.
 function initClient() {
   gapi.client.init({
     apiKey: API_KEY,
@@ -287,10 +181,8 @@ function initClient() {
   });
 }
 
-/**
- *  Called when the signed in status changes, to update the UI
- *  appropriately. After a sign-in, the API is called.
- */
+// Called when the signed in status changes, to update the UI appropriately. 
+// After a sign-in, the API is called.
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
@@ -303,25 +195,38 @@ function updateSigninStatus(isSignedIn) {
   }
 }
 
-/**
- *  Sign in the user upon button click.
- */
+// Sign in the user upon button click.
 function handleAuthClick(event) {
   gapi.auth2.getAuthInstance().signIn();
 }
 
-/**
- *  Sign out the user upon button click.
- */
+// Sign out the user upon button click.
 function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
 }
 
+function submitForm()
+{
+    for (i = 0; i < daysNum; i++) 
+    {   
+        var periodInputs = [];
+        for (j = 0; j < periodNum; j++)
+        {
+            periodInputs.push(document.getElementById("day-" + (i+1) + "-period-" + (j+1)).value);        
+        }
+        userInputs.push(periodInputs);
+        
+    }
+    userSchedule = new Schedule(fakeUserinputs);
+    importToCalendar(userSchedule, document.getElementById("userImportDays").checked);
+    //window.location.href = 'https://calendar.google.com/';
+    //document.getElementById("testing").innerHTML = document.getElementById("userImportDays").checked;
+}
+
 function importToCalendar(schedule, checked){
     console.log("importing");
-    var calendarID = "c_129cta5oug116p0bpvmu6gk0sg@group.calendar.google.com";
+    var calendarID = "c_ktnlv95n9lqvca1lv0f1gougik@group.calendar.google.com";
     for(var date in calendarCSV) {
-
         if(checkDateWithinRange(date))
         {
             var cycleDay = calendarCSV[date];
@@ -447,7 +352,6 @@ function belowEndDate(date){
     else{return false;}
 }
 
-
 function retry_(request, numRetries, numOriginal) {
     if(numRetries> 0){
         setTimeout(() => request.execute(function(event) {
@@ -457,7 +361,142 @@ function retry_(request, numRetries, numOriginal) {
                 console.log(numRetries);
                 setTimeout( () => retry_(request, numRetries-1), (Math.pow(2, numOriginal - numRetries)*1000) + (Math.round(Math.random() * 1000)));//added a 0
             }
-        }), (2000) + (Math.round(Math.random() * 1000)) ); 
+        }), (2000) + (Math.round(Math.random() * 1000))); 
     }       
 }
 
+// --------------------- CLASSES -------------------------
+//Settings Class
+class Settings {
+    
+    startDate;
+    endDate;
+    cycleNum;
+    periodNum;
+    cycleNames;
+    periodTimes;
+    calendarCSV;
+    
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV)
+    {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.cycleNum = cycleNum
+        this.periodNum = periodNum;
+        this.cycleNames = cycleNames;
+        this.periodTimes = periodTimes;
+        this.calendarCSV = calendarCSV;
+    }
+}
+
+//Schedule Class
+class Schedule {
+    userInput = [];
+    days = [];
+    
+    constructor(userInput)
+    {
+        this.userInput = userInput;
+        this.createDays(userInput);
+    }
+
+    createDays(userInput){
+        for(var i = 0; i<userInput.length; i++){
+            let input = userInput[i];
+            let newDay = new CycleDay(input, i);
+            this.days.push(newDay);
+        }
+    }
+
+    getDay(cycleDayName){
+        for (var i = 0; i<this.days.length ; i++){
+            if(this.days[i].dayName == cycleDayName){
+                return this.days[i];
+            }
+        }
+        return "ERROR: day not found";
+    }
+
+    createOutputString(){
+        let outputString = "";
+        outputString += "User Input: " + this.userInput + "\n";
+        outputString += "Days: \n";
+        for( i = 0; i < this.days.length; i++)
+        {
+            outputString += "\tDayName: " + this.days[i].dayName + "\n";
+            outputString += "\tPeriods: \n";
+            var periodsLength = this.days[i].periods.length;
+            for( j = 0; j< periodsLength; j++) //.periods.length; i++)
+            {
+                var currPeriod = this.days[i].periods[j];
+                outputString += "\t\tPeriodNum: " + currPeriod.periodNum + "\n";
+                outputString += "\t\t\tClassName: " + currPeriod.className + "\n";
+                outputString += "\t\t\tFree: " + currPeriod.freePeriod + "\n";
+                outputString += "\t\t\tStart: " + currPeriod.startTime + "\n";
+                outputString += "\t\t\tEnd: " + currPeriod.endTime + "\n";
+            }
+        }
+        console.log(outputString);
+        return outputString;
+    }
+
+}
+
+//CycleDay Class
+class CycleDay {
+    
+    dayName;
+    dayNum;
+    periods = [];
+    userInput;
+    
+    constructor(userInput, dayNum)
+    {
+        this.userInput = userInput;
+        this.createClasses(userInput);
+        this.dayNum = dayNum;
+        this.dayName = cycledayNames[dayNum];
+    }
+
+    createClasses(input){
+        for(var i = 0; i<input.length; i++){
+            let periodNum = i +1;
+            let className = input[i];
+            let newPeriod = new Period(periodNum, className);
+            newPeriod.setStartTime(periodTimes[periodNum * 2 - 2]);
+            newPeriod.setEndTime(periodTimes[periodNum * 2 - 1]);
+            this.periods.push(newPeriod);
+        }
+    }
+}
+
+//Period Class
+class Period {
+    
+    periodNum;
+    className;
+    freePeriod;
+    startTime;
+    endTime;
+    
+    constructor(periodNum, userInput)
+    {
+        this.className = userInput;
+        this.periodNum = periodNum;
+        if(userInput == null || userInput.trim().length == 0)
+        {
+            this.freePeriod = true;
+        }
+        else{
+            this.freePeriod = false;
+        }
+    }
+
+    setStartTime(time) {
+        this.startTime = time;
+    }
+
+    setEndTime(time){
+        this.endTime = time;
+    }
+}

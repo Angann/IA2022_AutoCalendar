@@ -33,6 +33,7 @@ const cycleNumIn = document.getElementById("cycleNum");
 cycleNumIn.addEventListener('input', createCycleNamesTableForm);
 
 document.getElementById("submitButton").addEventListener('click', submitSettings);
+//document.getElementById("settingsForm").addEventListener('submit', submitSettings);
 document.getElementById("resetButton").addEventListener('click', resetSettings);
 
 
@@ -96,6 +97,7 @@ function generatePeriodTableForm(table, num)
             inputField.setAttribute("id", "period-" + (i) + "-" + (j));
             inputField.setAttribute("maxlength", 50);
             inputField.setAttribute("class", "border rounded");
+            inputField.required = true;
             inputCell.appendChild(inputField);
         }
     }
@@ -154,6 +156,7 @@ function generateCycleNameTableForm(table, num)
         inputField.setAttribute("id", "cycleDay-" + i);
         inputField.setAttribute("maxlength", 50);
         inputField.setAttribute("class", "border rounded");
+        inputField.required = true;
         inputCell.appendChild(inputField);
     }
 }
@@ -259,7 +262,7 @@ var settingConverter = {
     }
 };
 
-async function submitSettings(e){
+function submitSettings(e){
     let startDate = document.getElementById("startDate").value;
     let endDate = document.getElementById("endDate").value;
     let periodNum = document.getElementById("periodNum").value;
@@ -277,17 +280,29 @@ async function submitSettings(e){
     }
     let calendarCSV;
     const csvFile = document.getElementById("formFile");
+    let submissionText = document.getElementById("submissionMsg");
     if(csvFile.files[0] == null)
     {
-        db.collection("Manage").doc("settings")
-        .update({
-            "startDate" : startDate, 
-            "endDate" : endDate, 
-            "cycleNum" : cycleNum, 
-            "periodNum" : periodNum, 
-            "cycleNames" : cycleNames, 
-            "periodTimes" : periodTimes
-        });
+            db.collection("Manage").doc("settings")
+            .update({
+                "startDate" : startDate, 
+                "endDate" : endDate, 
+                "cycleNum" : cycleNum, 
+                "periodNum" : periodNum, 
+                "cycleNames" : cycleNames, 
+                "periodTimes" : periodTimes
+            }).then(result => {
+                var today = new Date();
+                var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                submissionText.textContent = "Settings submitted at: "+ time;
+                submissionText.style.display = "block";
+                })
+                .catch(error => {
+                submissionText.textContent = "There was an error submitting settings";
+                submissionText.style.display = "block";
+                console.log(error);
+            });
+           
     }
     else{
         e.preventDefault();
@@ -305,10 +320,23 @@ async function submitSettings(e){
 }
 
 function pushToFirebase(settings){
-    // Set withConverter
+    let submissionText = document.getElementById("submissionMsg");
+    //Set with Converter
     db.collection("Manage").doc("settings")
     .withConverter(settingConverter)
-    .set(settings);
+    .set(settings)
+    .then(result => {
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        submissionText.textContent = "Settings submitted at: "+ time;
+        submissionText.style.display = "block";
+        })
+        .catch(error => {
+        submissionText.textContent = "There was an error submitting settings";
+        submissionText.style.display = "block";
+        console.log(error);
+    });;
+
 }
 
 function csvToArray(str, delimiter = ",") {

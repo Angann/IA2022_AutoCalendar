@@ -95,16 +95,6 @@ class Settings {
         this.periodTimes = periodTimes;
         this.calendarCSV = calendarCSV;
     }
-
-    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes)
-    {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.cycleNum = cycleNum
-        this.periodNum = periodNum;
-        this.cycleNames = cycleNames;
-        this.periodTimes = periodTimes;
-    }
 }
 
 export {Settings};

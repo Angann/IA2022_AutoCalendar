@@ -18,52 +18,43 @@
         CIS AUTO CALENDAR
         </h1>
     </div>
-
-    <p id = "testing" style = "display:none"> Original</p>
-
-    <div class="container">
-        <div class = "col-4">
-                <h1>
-                Manage
-                </h1>
-        </div>
-        <form id = "settingsForm" method = "post">
+    <div class="container" style = "padding-top:10px">
+        <p class = "fw-bold fs-1 text-center"> Manage Auto Calendar Settings</p>
+        <form id = "settingsForm" method = "post" >
             {% csrf_token %}
-
-
             <div class="row justify-content-center">
                 <div class="col-8 mb-3">
-                    <label for="formFile" class="form-label">Default file input example</label>
+                    <label for="formFile" class="form-label">Import Cycle Day CSV File  (This is not a required field if a previous file has already be uploaded) </label>
                     <input class="form-control" type="file" id="formFile" accept = ".csv">
                 </div>
             </div>
 
             <div class="row justify-content-center">
-                <div class="col-4 ">
-                    <label for="startDate" class="form-label">Start Date - Inclusive</label>
-                    <input type="date" class="form-control" id="startDate" placeholder="eg. 4">
+                <div class="col-4">
+                    <label for="startDate" class="form-label">Start Date (Inclusive)</label>
+                    <input type="date" class="form-control" id="startDate" required>
                 </div>
-                <div class="col-4 ">
-                    <label for="endDate" class="form-label">End Date - Inclusive</label>
-                    <input type="date" class="form-control" id="endDate" placeholder="eg. 4">
+                <div class="col-4">
+                    <label for="endDate" class="form-label">End Date (Inclusive)</label>
+                    <input type="date" class="form-control" id="endDate" required>
                 </div>
             </div>
 
             <div class="row justify-content-center">
-                <div class="col-4 ">
+                <div class="col-4">
                     <label for="periodNum" class="form-label">Periods in a Day</label>
-                    <input type="number" class="form-control" id="periodNum" placeholder="eg. 4">
+                    <input type="number" class="form-control" id="periodNum" placeholder="eg. 4" required>
                 </div>
-                <div class="col-4 ">
+                <div class="col-4">
                     <label for="cycleNum" class="form-label">Number of Cycle Days</label>
-                    <input type="number" class="form-control" id="cycleNum" placeholder="eg. 8">
+                    <input type="number" class="form-control" id="cycleNum" placeholder="eg. 8" required>
                 </div>
             </div>
 
             <br>
             <div class="row justify-content-center" id = "settingTables">
                 <div class="col-5" id = "periodIn">
-                    <label for="periodIn" class="form-label">Periods Times</label>
+                    <label for="periodIn" class="form-label">Periods Times (Make sure to double check AM & PM)</label>
 
                 </div>
                 <div class="col-3" id = "cycleIn">
@@ -73,18 +64,20 @@
             </div>
 
             <div class="row justify-content-center">
-                <div class = "col-4">
+                <div class = "col-4 d-grid">
+                    <span class="badge bg-danger" id = "submissionMsg" style = "display: none;"></span>
                     <button id = "submitButton" type="button" class="btn btn-primary" onclick="" > Submit</button>
                 </div>
-                <div class = "col-3">
+                <div class = "col-4 d-grid">
+                    <span class="badge bg-danger">Settings that have already been submitted cannot be undone</span>
                     <button id = "resetButton" type="button" class="btn btn-secondary" onclick=""> Undo Changes</button>
                 </div>
-
             </div>
             <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
             <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
             <script type="module" src = "{% static 'js/manage.js' %}"></script>
         </form>
+        <br>
 
     </div>
 </body>
