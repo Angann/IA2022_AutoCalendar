@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/wsgi/
 
 import os
 import sys
+from whitenoise.django import DjangoWhiteNoise
+
 
 from django.core.wsgi import get_wsgi_application
 
@@ -20,3 +22,5 @@ if path not in sys.path:
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Auto_Calendar.settings')
 
 application = get_wsgi_application()
+application = DjangoWhiteNoise(application)
+
