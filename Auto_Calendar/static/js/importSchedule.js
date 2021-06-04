@@ -217,7 +217,7 @@ function submitForm()
         userInputs.push(periodInputs);
         
     }
-    userSchedule = new Schedule(fakeUserinputs);
+    userSchedule = new Schedule(userInputs);
     importToCalendar(userSchedule, document.getElementById("userImportDays").checked);
     //window.location.href = 'https://calendar.google.com/';
     //document.getElementById("testing").innerHTML = document.getElementById("userImportDays").checked;
@@ -225,7 +225,7 @@ function submitForm()
 
 function importToCalendar(schedule, checked){
     console.log("importing");
-    var calendarID = "c_ktnlv95n9lqvca1lv0f1gougik@group.calendar.google.com";
+    var calendarID = "primary";
     for(var date in calendarCSV) {
         if(checkDateWithinRange(date))
         {
