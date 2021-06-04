@@ -13,6 +13,7 @@ var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
+var authorizeText = document.getElementById('authorizeText');
 var step1Div = document.getElementById("loginDiv");
 var step2Div = document.getElementById("inputDiv");
 
@@ -89,7 +90,7 @@ db.collection("Manage").doc("settings")
     cycledayNames = settings.cycleNames;
     periodTimes = settings.periodTimes;
     calendarCSV = settings.calendarCSV;
-    console.log("imported");
+    console.log("imported settings");
     createTableForm();
     } else {
     console.log("No such document!");
@@ -186,10 +187,12 @@ function initClient() {
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
+    authorizeText.style.display = 'none';
     signoutButton.style.display = 'block';
     step2Div.style.display = 'block';
   } else {
     authorizeButton.style.display = 'block';
+    authorizeText.style.display = 'block';
     signoutButton.style.display = 'none';
     step2Div.style.display = 'none';
   }
@@ -224,7 +227,6 @@ function submitForm()
 }
 
 function importToCalendar(schedule, checked){
-    console.log("importing");
     var calendarID = "primary";
     for(var date in calendarCSV) {
         if(checkDateWithinRange(date))
