@@ -222,8 +222,7 @@ function submitForm()
     }
     userSchedule = new Schedule(userInputs);
     importToCalendar(userSchedule, document.getElementById("userImportDays").checked);
-    //window.location.href = 'https://calendar.google.com/';
-    //document.getElementById("testing").innerHTML = document.getElementById("userImportDays").checked;
+    window.location.href = 'https://calendar.google.com/';
 }
 
 function importToCalendar(schedule, checked){
