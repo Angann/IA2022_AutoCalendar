@@ -49,12 +49,16 @@
 
     <br>
 
+    <div class="d-flex justify-content-center">
+        <h3 id = "authorizeText" style = "display: none;">Step 1: Log Into Google </h3>
+    </div>
+    <br>
     <div id = "loginDiv" class ="d-flex justify-content-center">
-        <h3 id = "authorizeText" style = "display: none;" >Step 1: Log Into Google</h3>
+
         <button id = "authorize_button" style = "display: none;" class="btn btn-primary">Log Into Google</button>
         <button id = "signout_button" style = "display: none;" class = "btn btn-primary" >Sign Out</button>
-        <br>
     </div>
+    <br>
 
     <script defer src="https://apis.google.com/js/api.js"
       onload="this.onload=function(){};handleClientLoad()"
