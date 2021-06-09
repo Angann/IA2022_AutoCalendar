@@ -21,7 +21,7 @@
 
     <div id = "inputDiv" style = "display: none ;">
         <div class = "row justify-content-center" >
-            <div class = "col-auto">
+            <div class = "col-auto" id = "step2and3" style = "display: block">
                 <h3>Step 2: Input your schedule in the table below</h3>
                 <p>Leave any free periods blank</p>
                 <form id = "userScheduleInput" method = "post" name = "userform">
@@ -38,11 +38,22 @@
                         <h3>Step 3: Import to Google Calendar</h3>
                         <p>Clicking this button will create an event for each class according to the schedule you input above within the date range.</p>
                         <p>The events <b>will not all show up immediately</b> and the process may take up to 30 seconds.</p>
-                        <p>Make sure to reload the page if events are still missing.</p>
+                        <p>Make sure to reload your calendar if events are still missing.</p>
                         <button id = "userSubmitButton" class="btn btn-primary" type="button" onclick="submitForm()">Import to Google Calendar</button>
                     </div>
+
                 </form>
                 </br>
+            </div>
+            <div class = "col-auto" id = "step4" style = "display: none">
+                <h3 id = "step4txt">Step 4: Your calendar events are being imported. Please Wait</h3>
+                <p><b>DO NOT CLOSE THIS TAB</b> while the import is completing!</p>
+                <p>The events <b>will not all show up immediately</b> and the process may take up to 30 seconds.</p>
+                <p>Make sure to reload your calendar if events are still missing.</p>
+                <div class="spinner-border text-primary" role="status" style = "display: none; padding-top:10px" id = "loadingSpinner">
+                      <span class="visually-hidden">Loading...</span>
+                </div>
+                <button id = "calendarButton" class="btn btn-primary" type="button" onclick="location.href = 'https://calendar.google.com';" style = "display: none">Go to Google Calendar</button>
             </div>
         </div>
     </div>
@@ -50,7 +61,7 @@
     <br>
 
     <div class="d-flex justify-content-center">
-        <h3 id = "authorizeText" style = "display: none;">Step 1: Log Into Google </h3>
+        <h3 id = "step1" style = "display: none;">Step 1: Log Into Google </h3>
     </div>
     <br>
     <div id = "loginDiv" class ="d-flex justify-content-center">

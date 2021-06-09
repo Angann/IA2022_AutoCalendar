@@ -24,7 +24,9 @@
             {% csrf_token %}
             <div class="row justify-content-center">
                 <div class="col-8 mb-3">
-                    <label for="formFile" class="form-label">Import Cycle Day CSV File  (This is not a required field if a previous file has already be uploaded) </label>
+                    <label for="formFile" class="form-label">Import Cycle Day CSV File:
+                        <a href="https://drive.google.com/file/d/10TY77hzJCET8eVGBxIgavp2UCNajFqFO/view?usp=sharing">Example File</a> <br>
+                        (This is not a required field if a previous file has already be uploaded) </label>
                     <input class="form-control" type="file" id="formFile" accept = ".csv">
                 </div>
             </div>

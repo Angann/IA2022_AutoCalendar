@@ -1,5 +1,5 @@
 //----------------------USER INPUT AND SCHEUDLE OBJECT CREATOR SECTION---------------------------
-
+//Calendar Id and Fake user input
 // Client ID and API key from the Developer Console
 var CLIENT_ID = '1097932129420-mkla5e9ibr6qgok18dvn3ac3f2a4f9in.apps.googleusercontent.com';
 var API_KEY = 'AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A';
@@ -13,9 +13,11 @@ var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
-var authorizeText = document.getElementById('authorizeText');
-var step1Div = document.getElementById("loginDiv");
-var step2Div = document.getElementById("inputDiv");
+var step1 = document.getElementById('step1');
+var step2and3 = document.getElementById('step2and3');
+var step4 = document.getElementById('step4');
+var loginDiv = document.getElementById("loginDiv");
+var inputDiv = document.getElementById("inputDiv");
 
 var firebaseConfig = {
     apiKey: "AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A",
@@ -187,14 +189,14 @@ function initClient() {
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
-    authorizeText.style.display = 'none';
+    step1.style.display = 'none';
     signoutButton.style.display = 'block';
-    step2Div.style.display = 'block';
+    inputDiv.style.display = 'block';
   } else {
     authorizeButton.style.display = 'block';
-    authorizeText.style.display = 'block';
+    step1.style.display = 'block';
     signoutButton.style.display = 'none';
-    step2Div.style.display = 'none';
+    inputDiv.style.display = 'none';
   }
 }
 
@@ -222,11 +224,17 @@ function submitForm()
     }
     userSchedule = new Schedule(userInputs);
     importToCalendar(userSchedule, document.getElementById("userImportDays").checked);
-    window.location.href = 'https://calendar.google.com/';
+    step2and3.style.display = 'none';
+    step4.style.display = 'block';
 }
 
-function importToCalendar(schedule, checked){
-    var calendarID = "primary";
+async function importToCalendar(schedule, checked){
+    var calendarID = "primary"; //here
+    var spinner = document.getElementById("loadingSpinner");
+    var step4txt = document.getElementById("step4txt");
+    var calendarButtonLink = document.getElementById("calendarButton");
+    spinner.style.display = "block";
+    var failedRequests = [];
     for(var date in calendarCSV) {
         if(checkDateWithinRange(date))
         {
@@ -240,7 +248,7 @@ function importToCalendar(schedule, checked){
                     var eventResource = {
                         'summary': schedulePeriod.className,
                         'start': {
-                            'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:00'
+                            'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:00'//added 0
                             },
                         'end': {
                             'dateTime': dateInput + 'T'+ schedulePeriod.endTime +':00+08:00'
@@ -250,9 +258,27 @@ function importToCalendar(schedule, checked){
                         'calendarId': calendarID,
                         'resource': eventResource
                     });
-                    retry_(request, 10, 10);
-
-                    //console.log(schedulePeriod.className + ": " + dateInput + 'T' + schedulePeriod.startTime+':00+08:00');
+                    console.log(date);
+                    if(i !=scheduleDay.periods.length -1 ){
+                        console.log("calling non wait");
+                        request.execute(function(event){
+                            if(event.hasOwnProperty('error'))
+                            {
+                                failedRequests.push(request);
+                                console.log(event);
+                            }
+                            else{
+                                console.log(event);
+                            }
+                        })
+                    }
+                    else{
+                        console.log("calling wait");
+                        var result = await callRequestWait(request);
+                        if(result == "fail"){
+                            failedRequests.push(request);
+                        }
+                    }
                 }
             }
             if(checked){
@@ -269,10 +295,23 @@ function importToCalendar(schedule, checked){
                     'calendarId': calendarID,
                     'resource': eventResource
                 });
-                retry_(request, 10, 10);
+                callRequest(request);
             }
         }
     }
+
+    var count = 2;
+    while(failedRequests.length != 0){
+        console.log("RERUN: " + count);
+        failedRequests = await rerunFailedReq(failedRequests);
+        count -= 1;
+        if(count == 0){
+            failedRequests = [];
+        }
+    }
+    spinner.style.display = "none";
+    calendarButtonLink.style.display = "block";
+    step4txt.textContent = "Step4: Import complete.";
 }
 
 function makeDateString(date){
@@ -353,17 +392,31 @@ function belowEndDate(date){
     else{return false;}
 }
 
-function retry_(request, numRetries, numOriginal) {
-    if(numRetries> 0){
-        setTimeout(() => request.execute(function(event) {
+function callRequestWait(request){ 
+    return new Promise(resolve => {
+        request.execute(function(event){
             if(event.hasOwnProperty('error'))
             {
                 console.log(event);
-                console.log(numRetries);
-                setTimeout( () => retry_(request, numRetries-1), (Math.pow(2, numOriginal - numRetries)*1000) + (Math.round(Math.random() * 1000)));//added a 0
+                resolve("fail");
             }
-        }), (2000) + (Math.round(Math.random() * 1000))); 
-    }       
+            else{
+                console.log(event);
+                resolve("success");
+            }
+        }
+    )})
+}
+
+async function rerunFailedReq(failedRequests){
+    var newFailedRequests = [];
+    for(var i = 0; i< failedRequests.length; i++){
+        var result = await callRequestWait(failedRequests[i]);
+        if(result == "fail"){
+            newFailedRequests.push(failedRequests[i]);
+        }
+    }
+    return newFailedRequests;
 }
 
 // --------------------- CLASSES -------------------------
