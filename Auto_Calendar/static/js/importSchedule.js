@@ -166,7 +166,8 @@ function handleClientLoad() {
 
 // Initializes the API client library and sets up sign-in state listeners.
 function initClient() {
-  gapi.client.init({
+  console.log("initializing client");
+    gapi.client.init({
     apiKey: API_KEY,
     clientId: CLIENT_ID,
     discoveryDocs: DISCOVERY_DOCS,
@@ -179,8 +180,9 @@ function initClient() {
     updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
     authorizeButton.onclick = handleAuthClick;
     signoutButton.onclick = handleSignoutClick;
+    console.log("initialized client");
   }, function(error) {
-    //appendPre(JSON.stringify(error, null, 2));
+    console.log(error);
   });
 }
 
