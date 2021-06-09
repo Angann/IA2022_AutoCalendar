@@ -33,10 +33,24 @@ const cycleNumIn = document.getElementById("cycleNum");
 cycleNumIn.addEventListener('input', createCycleNamesTableForm);
 
 document.getElementById("submitButton").addEventListener('click', submitSettings);
-//document.getElementById("settingsForm").addEventListener('submit', submitSettings);
 document.getElementById("resetButton").addEventListener('click', resetSettings);
+document.getElementById("passwordSubmit").addEventListener('click', checkPswd);
 
 
+function checkPswd() {
+    var confirmPassword = "cisadmin";
+    var password = document.getElementById("pswd").value;
+    if (password == confirmPassword) {
+        document.getElementById("passwordForm").style.display = "none";
+        document.getElementById("settingsForm").style.display = "block";
+        console.log("correct password");
+
+    }
+    else{
+        document.getElementById("wrongPasswordMsg").textContent = "Wrong Password";
+        console.log("wrong password");
+    }
+}
 
 function createPeriodTableForm(num) {
 

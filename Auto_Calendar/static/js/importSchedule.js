@@ -297,7 +297,7 @@ async function importToCalendar(schedule, checked){
                     'calendarId': calendarID,
                     'resource': eventResource
                 });
-                callRequest(request);
+                callRequestWait(request);
             }
         }
     }
