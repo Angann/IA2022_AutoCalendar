@@ -1,14 +1,18 @@
-//----------------------USER INPUT AND SCHEUDLE OBJECT CREATOR SECTION---------------------------
-//Calendar Id and Fake user input
+/*
+ * CIS AUTO CALENDAR: USER IMPORT
+ * This file contiains the code used to run the user import page in the CISAutoCalendar Website
+ * Author: Adrian Ngan (CIS Class of 2022)
+ */
+
+//--------------- USER INPUT AND SCHEUDLE OBJECT CREATOR SECTION ---------------
+// Initialzing Google Calendar API
 // Client ID and API key from the Developer Console
 var CLIENT_ID = '1097932129420-mkla5e9ibr6qgok18dvn3ac3f2a4f9in.apps.googleusercontent.com';
 var API_KEY = 'AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A';
 
-// Array of API discovery doc URLs for APIs used by the quickstart
+// Array of API discovery doc URLs for APIs
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
 var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
 var authorizeButton = document.getElementById('authorize_button');
@@ -19,6 +23,7 @@ var step4 = document.getElementById('step4');
 var loginDiv = document.getElementById("loginDiv");
 var inputDiv = document.getElementById("inputDiv");
 
+//Intializing Firebase
 var firebaseConfig = {
     apiKey: "AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A",
     authDomain: "ia2022-autocalendar.firebaseapp.com",
@@ -51,6 +56,7 @@ var settingConverter = {
     }
 };
 
+//Intializing and getting varibles from settings (from Firebase)
 var startDate;
 var endDate;
 var periodNum;
@@ -66,19 +72,10 @@ var fakeUserinputs = [
     ["3Econ", "3Econ", "3CS", "3Chem"],
     ["E4con", "4Econ", "4CS", "4Chem"],
     ["5Econ", "5Econ", "5CS", "5Chem"],
-    ["6Econ", "6Econ", "6CS", "C6hem"],
+    ["6Econ", "6Econ", "6CS", "6Chem"],
     ["7Econ", "7Econ", "7CS", "7Chem"],
     ["8Econ", "8Econ", "8CS", "8Chem"]
 ];
-var fakeCSVData = {
-    "A1":"24/5/2021",
-    "B1":"25/5/2021",
-    "A2":"26/5/2021",
-    "B2":"27/5/2021",
-    "A3":"28/5/2021",
-    "B3":"31/5/2021",
-    "A4":"1/6/2021",
-    "B4":"2/6/2021"};
 
 db.collection("Manage").doc("settings")
 .withConverter(settingConverter)
@@ -102,9 +99,13 @@ db.collection("Manage").doc("settings")
 
 
 // -----------------------FUNCTIONS------------------------
-function createTableForm() {
+//This function creates a new table for user schedule inputs and calls generateTableForm
+//This function is called when the page is loaded. The table created contiains input fields  
+//for the user to input the name of the period they have at each slot
+function createTableForm(){
 
-    var form = document.getElementById("userScheduleInput");
+    var dateRangeText = document.getElementById("dateRangeText");
+    dateRangeText.textContent = "Currently creates schedule from " + startDate + " to " + endDate + "(YY/MM/DD)";
     var tableDiv = document.getElementById("tableInput");
 
 
@@ -116,6 +117,7 @@ function createTableForm() {
 
 }
 
+//This function creates the attributes such as input fields and headings within the input table
 function generateTableForm(table)
 {
     let thead = table.createTHead();
@@ -127,6 +129,7 @@ function generateTableForm(table)
     th.setAttribute("scope", "col");
     columnHeadings.appendChild(th);
     
+    //Column Headings
     for (i = 0; i < periodNum; i++) 
     {
         let th = document.createElement("th");
@@ -136,6 +139,7 @@ function generateTableForm(table)
         columnHeadings.appendChild(th);
     }
 
+    //Rows
     for (i = 0; i < daysNum; i++) 
     {
         let row = table.insertRow();
@@ -145,6 +149,7 @@ function generateTableForm(table)
         rowLabel.setAttribute("class", "table-light");
         rowLabel.appendChild(cycledayName);
         
+        //Input fields
         for (j = 0; j < periodNum; j++)
         {
             let inputCell = row.insertCell();
@@ -212,6 +217,7 @@ function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
 }
 
+//This function is called when the user clicks the 'Import' button. It takes the user's inputs and calls importToCalendar
 function submitForm()
 {
     for (i = 0; i < daysNum; i++) 
@@ -230,18 +236,21 @@ function submitForm()
     step4.style.display = 'block';
 }
 
+//This function calls the Google Calendar API and sends requests to create the apporiate events in the user's calendar
 async function importToCalendar(schedule, checked){
-    var calendarID = "primary"; //here
+    var calendarID = "primary"; 
     var spinner = document.getElementById("loadingSpinner");
     var step4txt = document.getElementById("step4txt");
     var calendarButtonLink = document.getElementById("calendarButton");
     spinner.style.display = "block";
     var failedRequests = [];
     for(var date in calendarCSV) {
-        if(checkDateWithinRange(date))
+        if(checkDateWithinRange(date)) //Checks if the date in the specified date range
         {
             var cycleDay = calendarCSV[date];
             var scheduleDay = schedule.getDay(cycleDay);
+            
+            //Imports Periods
             for(var i = 0; i< scheduleDay.periods.length; i++){
                 var schedulePeriod = scheduleDay.periods[i];
                 if (!schedulePeriod.freePeriod)
@@ -250,7 +259,7 @@ async function importToCalendar(schedule, checked){
                     var eventResource = {
                         'summary': schedulePeriod.className,
                         'start': {
-                            'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:00'//added 0
+                            'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:000'
                             },
                         'end': {
                             'dateTime': dateInput + 'T'+ schedulePeriod.endTime +':00+08:00'
@@ -261,6 +270,12 @@ async function importToCalendar(schedule, checked){
                         'resource': eventResource
                     });
                     console.log(date);
+
+                    //For the first 3 periods in the day, the function sends each 
+                    //request without waiting for a response from the pervious
+                    //For the 4th period, the function calls an async function that 
+                    //waits for the 4 total requests sent.
+                    //This is to improve the speed of the program.
                     if(i !=scheduleDay.periods.length -1 ){
                         console.log("calling non wait");
                         request.execute(function(event){
@@ -283,6 +298,7 @@ async function importToCalendar(schedule, checked){
                     }
                 }
             }
+            //Imports Cycle Day Events
             if(checked){
                 var eventResource = {
                     'summary': cycleDay,
@@ -297,25 +313,40 @@ async function importToCalendar(schedule, checked){
                     'calendarId': calendarID,
                     'resource': eventResource
                 });
-                callRequestWait(request);
+                var result = await callRequestWait(request);
+                    if(result == "fail"){
+                        failedRequests.push(request);
+                    }
             }
         }
     }
 
-    var count = 2;
+    //If requests fail, they are rerun up to 5 times.
+    //If they still fail after 5 retrys, an error msg is displayed
+    var count = 5;
+    var fail = false;
     while(failedRequests.length != 0){
         console.log("RERUN: " + count);
         failedRequests = await rerunFailedReq(failedRequests);
         count -= 1;
         if(count == 0){
             failedRequests = [];
+            fail = true;
         }
     }
     spinner.style.display = "none";
     calendarButtonLink.style.display = "block";
-    step4txt.textContent = "Step4: Import complete.";
+    if(fail)
+    {
+        step4txt.textContent = "Step4: There has been an error. Events may be missing";
+    }
+    else{
+        step4txt.textContent = "Step4: Import complete.";
+    }
+    
 }
 
+//This function creates an ISODate string
 function makeDateString(date){
     var ISODate = "";
     var split = date.split("/");
@@ -333,6 +364,7 @@ function makeDateString(date){
     return ISODate;
 }
 
+//This function calls aboveStartDate and belowEndDate to check if the date occurs within the range
 function checkDateWithinRange(date){
     var date = date.split("/"); //Format: DD/MM/YY
     if(aboveStartDate(date) && belowEndDate(date))
@@ -344,6 +376,7 @@ function checkDateWithinRange(date){
     }
 }
 
+//This function checks if give date occurs after the start date
 function aboveStartDate(date){
     var startDateArr = startDate.split("-"); //Format: YY-MM-DD
     if(parseInt(date[2]) > parseInt(startDateArr[0]))
@@ -369,6 +402,7 @@ function aboveStartDate(date){
     else{return false;}
 }
 
+//This function checks if give date occurs before the end date
 function belowEndDate(date){
     var endDateArr = endDate.split("-"); //Format: YY-MM-DD
     if(parseInt(date[2]) < parseInt(endDateArr[0]))
@@ -394,6 +428,7 @@ function belowEndDate(date){
     else{return false;}
 }
 
+//This function executes a request and returns a promise
 function callRequestWait(request){ 
     return new Promise(resolve => {
         request.execute(function(event){
@@ -410,6 +445,7 @@ function callRequestWait(request){
     )})
 }
 
+//This function reruns all failed requests
 async function rerunFailedReq(failedRequests){
     var newFailedRequests = [];
     for(var i = 0; i< failedRequests.length; i++){
@@ -421,8 +457,14 @@ async function rerunFailedReq(failedRequests){
     return newFailedRequests;
 }
 
-// --------------------- CLASSES -------------------------
-//Settings Class
+// --------------- MODELS AND CLASSES ---------------
+/*
+ * Settings Class
+ * 
+ * This class contains information of the school's timetable and settings for the import process.
+ * These settings are determined by the admins through the Manage page and is stored in Firebase
+ * 
+ */
 class Settings {
     
     startDate;
@@ -445,7 +487,12 @@ class Settings {
     }
 }
 
-//Schedule Class
+/*
+ * Schedule Class
+ * 
+ * This class contains information for the user's schedule. 
+ * The 'days' list stores the CycleDay objects
+ */
 class Schedule {
     userInput = [];
     days = [];
@@ -454,14 +501,6 @@ class Schedule {
     {
         this.userInput = userInput;
         this.createDays(userInput);
-    }
-
-    createDays(userInput){
-        for(var i = 0; i<userInput.length; i++){
-            let input = userInput[i];
-            let newDay = new CycleDay(input, i);
-            this.days.push(newDay);
-        }
     }
 
     getDay(cycleDayName){
@@ -473,6 +512,16 @@ class Schedule {
         return "ERROR: day not found";
     }
 
+    //Creates each cycleday object according to the user inputs
+    createDays(userInput){
+        for(var i = 0; i<userInput.length; i++){
+            let input = userInput[i];
+            let newDay = new CycleDay(input, i);
+            this.days.push(newDay);
+        }
+    }
+
+    //Creates a readable string of information in the object
     createOutputString(){
         let outputString = "";
         outputString += "User Input: " + this.userInput + "\n";
@@ -482,7 +531,7 @@ class Schedule {
             outputString += "\tDayName: " + this.days[i].dayName + "\n";
             outputString += "\tPeriods: \n";
             var periodsLength = this.days[i].periods.length;
-            for( j = 0; j< periodsLength; j++) //.periods.length; i++)
+            for( j = 0; j< periodsLength; j++) 
             {
                 var currPeriod = this.days[i].periods[j];
                 outputString += "\t\tPeriodNum: " + currPeriod.periodNum + "\n";
@@ -498,7 +547,12 @@ class Schedule {
 
 }
 
-//CycleDay Class
+/*
+ * CycleDay Class
+ * 
+ * This class contains information for the specifc Cycle Day. 
+ * The 'periods' list stores the Period objects
+ */
 class CycleDay {
     
     dayName;
@@ -514,6 +568,7 @@ class CycleDay {
         this.dayName = cycledayNames[dayNum];
     }
 
+    //Creates each period object for the given cycle day
     createClasses(input){
         for(var i = 0; i<input.length; i++){
             let periodNum = i +1;
@@ -526,7 +581,12 @@ class CycleDay {
     }
 }
 
-//Period Class
+/*
+ * Period Class
+ * 
+ * This class contains information for a specifc Period. 
+ * Period objects are stored within CycleDay Objects
+ */
 class Period {
     
     periodNum;

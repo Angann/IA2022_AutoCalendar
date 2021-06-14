@@ -26,6 +26,7 @@
                 <p>Leave any free periods blank</p>
                 <form id = "userScheduleInput" method = "post" name = "userform">
                     {% csrf_token %}
+                    <span class="badge bg-primary" id = "dateRangeText"></span>
                     <div id = "tableInput">
 
                     </div>
@@ -36,7 +37,7 @@
                     </div>
                     <div style = "padding-top:30px">
                         <h3>Step 3: Import to Google Calendar</h3>
-                        <p>Clicking this button will create an event for each class according to the schedule you input above within the date range.</p>
+                        <p>Clicking this button will create an event for each class according to the schedule you input above.</p>
                         <p>The events <b>will not all show up immediately</b> and the process may take up to 30 seconds.</p>
                         <p>Make sure to reload your calendar if events are still missing.</p>
                         <button id = "userSubmitButton" class="btn btn-primary" type="button" onclick="submitForm()">Import to Google Calendar</button>
@@ -53,7 +54,8 @@
                 <div class="spinner-border text-primary" role="status" style = "display: none; padding-top:10px" id = "loadingSpinner">
                       <span class="visually-hidden">Loading...</span>
                 </div>
-                <button id = "calendarButton" class="btn btn-primary" type="button" onclick="location.href = 'https://calendar.google.com';" style = "display: none">Go to Google Calendar</button>
+                <button id = "calendarButton" class="btn btn-primary" type="button" onclick="location.href = 'https://calendar.google.com';"
+                        style = "display: none">Go to Google Calendar</button>
             </div>
         </div>
     </div>

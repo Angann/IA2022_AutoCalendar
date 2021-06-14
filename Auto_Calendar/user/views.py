@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 
-# Create your views here.
+# Handles views for each page
 def index(request):
     return render(request, "user/index.html")
 

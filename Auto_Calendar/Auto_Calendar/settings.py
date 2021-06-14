@@ -15,10 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'uou!-hjh5cx6w%o=uyb4jv9kghsuexfr)7xev%75oc6pqfx00y'
 
@@ -32,10 +28,6 @@ ALLOWED_HOSTS = ['127.0.0.1', 'cisautocalendar.herokuapp.com', 'localhost']
 
 INSTALLED_APPS = [
     'user',
-    #'allauth',
-    #'allauth.account',
-    #'allauth.socialaccount',
-    #'allauth.socialaccount.providers.google',
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -133,7 +125,7 @@ STATICFILES_DIRS = [
    os.path.join(BASE_DIR, "static"),
    ]
 
-#OAuth stuff
+#OAuth 
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

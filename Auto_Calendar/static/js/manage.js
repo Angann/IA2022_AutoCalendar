@@ -1,3 +1,9 @@
+/*
+ * CIS AUTO CALENDAR: MANAGE
+ * This file contiains the code used to run the manage page in the CISAutoCalendar Website
+ * Author: Adrian Ngan (CIS Class of 2022)
+ */
+
 import {Settings} from "./models.js";
 
 //Initializing Firebase
@@ -15,21 +21,40 @@ firebase.initializeApp(firebaseConfig);
 
 var db = firebase.firestore();
 
-//Creating Table Forms
+// Firestore data converter
+var settingConverter = {
+    toFirestore: function(settings) {
+        return {
+            startDate: settings.startDate,
+            endDate: settings.endDate,
+            cycleNum: settings.cycleNum,
+            periodNum: settings.periodNum,
+            cycleNames: settings.cycleNames,
+            periodTimes: settings.periodTimes,
+            calendarCSV: settings.calendarCSV
+            };
+    },
+    fromFirestore: function(snapshot, options){
+        const data = snapshot.data(options);
+        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV);
+    }
+};
+
+//Initializing Variables from Settings
 var startDate;
 var endDate;
 var periodNum;
 var daysNum ;
 var cycleDayNames;
 var periodTimes;
-var calendarCSV;
-resetSettings(); 
-const periodNumIn = document.getElementById("periodNum");
 
+resetSettings(); //gets settings from Firebase
+
+//Assinging Inputs and Buttons to their appropriate listeners
+const periodNumIn = document.getElementById("periodNum");
 periodNumIn.addEventListener('input', createPeriodTableForm);
 
 const cycleNumIn = document.getElementById("cycleNum");
-
 cycleNumIn.addEventListener('input', createCycleNamesTableForm);
 
 document.getElementById("submitButton").addEventListener('click', submitSettings);
@@ -37,6 +62,8 @@ document.getElementById("resetButton").addEventListener('click', resetSettings);
 document.getElementById("passwordSubmit").addEventListener('click', checkPswd);
 
 
+//--------------- FUNCTIONS ---------------
+//This function check the input for the password field 
 function checkPswd() {
     var confirmPassword = "cisadmin";
     var password = document.getElementById("pswd").value;
@@ -52,6 +79,9 @@ function checkPswd() {
     }
 }
 
+//This function creates a new table for period time inputs and calls generatePeriodTableForm
+//This function is called when the admin changes the number of periods, and is used to adapt the table
+//to match the number of periods
 function createPeriodTableForm(num) {
 
     var div = document.getElementById("periodIn");
@@ -70,8 +100,10 @@ function createPeriodTableForm(num) {
     div.append(table);
 }
 
+//This function creates all the components required for the period times input table
 function generatePeriodTableForm(table, num)
 {
+    //Creates the 3 columns
     let thead = table.createTHead();
     let columnHeadings = thead.insertRow();
     columnHeadings.setAttribute("class", "table-light");
@@ -81,12 +113,12 @@ function generatePeriodTableForm(table, num)
     th.setAttribute("scope", "col");
     columnHeadings.appendChild(th);
     
-
     let th2 = document.createElement("th");
     let text2 = document.createTextNode("Period Start");
     th2.appendChild(text2);
     th2.setAttribute("scope", "col");
     columnHeadings.appendChild(th2);
+
     let th3 = document.createElement("th");
     let text3 = document.createTextNode("Period End");
     th3.appendChild(text3);
@@ -94,6 +126,7 @@ function generatePeriodTableForm(table, num)
     columnHeadings.appendChild(th3);
     
 
+    //Creates each row and input fields with the appropriate ID
     for (let i = 1; i <= num; i++) 
     {
         let row = table.insertRow();
@@ -117,6 +150,7 @@ function generatePeriodTableForm(table, num)
     }
 }
 
+//This functions creates a new table for cycle day name inputs and calls generateCycleNamePeriodForm
 function createCycleNamesTableForm(num) {
 
     var div = document.getElementById("cycleIn");
@@ -136,8 +170,10 @@ function createCycleNamesTableForm(num) {
 
 }
 
+//This function creates all the components required for the period times input table
 function generateCycleNameTableForm(table, num)
 {
+     //Creates the columns
     let thead = table.createTHead();
     let columnHeadings = thead.insertRow();
     columnHeadings.setAttribute("class", "table-light");
@@ -154,7 +190,7 @@ function generateCycleNameTableForm(table, num)
     th2.setAttribute("scope", "col");
     columnHeadings.appendChild(th2);
     
-
+    //Creates each row and input fields with the appropriate ID
     for (let i = 1; i <= num; i++) 
     {
         let row = table.insertRow();
@@ -175,6 +211,8 @@ function generateCycleNameTableForm(table, num)
     }
 }
 
+//This function gets the settings from firebase and calls functions to intialize the input tables and fields.
+//This function is called when the page is first opened as well as when the undo changes button is clicked
 async function resetSettings()
 {
     db.collection("Manage").doc("settings")
@@ -191,14 +229,16 @@ async function resetSettings()
         initalizeTables();
         initializeFields();
         } else {
-        console.log("No such document!");
+        console.log("Firebase Error: No such document!");
         }}).catch((error) => {
-        console.log("Error getting document:", error);
+        console.log("Firebase Error: Error getting document:", error);
     });
 }
 
+//This function is called when the website is loaded for the first time. It creates the table inputs 
+//and fills each input with the value that is currently stored in Firebase
 function initalizeTables(){
-    //Period Table
+    //Period Table Section
     var divP = document.getElementById("periodIn");
 
     var oldTable = document.getElementById("periodTable");
@@ -220,7 +260,8 @@ function initalizeTables(){
             inputCell.value = periodTimes[(i-1)*2 + j];
         }
     }
-    //Cycle Table
+
+    //Cycle Table Section
     var divC = document.getElementById("cycleIn");
 
     var oldTable = document.getElementById("cycleTable");
@@ -242,6 +283,8 @@ function initalizeTables(){
     }
 }
 
+//This function is called when the website is loaded for the first time. It creates the non-table inputs 
+//and fills each input with the value that is currently stored in Firebase
 function initializeFields(){
     var startField = document.getElementById("startDate");
     startField.value = startDate;
@@ -257,26 +300,10 @@ function initializeFields(){
 
 }
 
-// Firestore data converter
-var settingConverter = {
-    toFirestore: function(settings) {
-        return {
-            startDate: settings.startDate,
-            endDate: settings.endDate,
-            cycleNum: settings.cycleNum,
-            periodNum: settings.periodNum,
-            cycleNames: settings.cycleNames,
-            periodTimes: settings.periodTimes,
-            calendarCSV: settings.calendarCSV
-            };
-    },
-    fromFirestore: function(snapshot, options){
-        const data = snapshot.data(options);
-        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV);
-    }
-};
 
+//This function submits the admin's inputs to Firebase. Is called when the submit button is clicked
 function submitSettings(e){
+    //Takes values from input fields
     let startDate = document.getElementById("startDate").value;
     let endDate = document.getElementById("endDate").value;
     let periodNum = document.getElementById("periodNum").value;
@@ -295,6 +322,8 @@ function submitSettings(e){
     let calendarCSV;
     const csvFile = document.getElementById("formFile");
     let submissionText = document.getElementById("submissionMsg");
+    
+    //If the admin hasnt imported a CSV file, update the firebase object without deleteing the old CSV data 
     if(csvFile.files[0] == null)
     {
             db.collection("Manage").doc("settings")
@@ -318,13 +347,14 @@ function submitSettings(e){
             });
            
     }
+    //If the admin has imported a CSV file, set the new firebase object and overide the old CSV data
     else{
         e.preventDefault();
         const input = csvFile.files[0];
         const reader = new FileReader();
         reader.onload = function (e) {
             const text = e.target.result;
-            const data = csvToArray(text);
+            const data = csvToDict(text);
             calendarCSV = data;
             var settings = new Settings(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV);
             pushToFirebase(settings);
@@ -333,6 +363,7 @@ function submitSettings(e){
     }
 }
 
+//This function sets a new setting object in firebase
 function pushToFirebase(settings){
     let submissionText = document.getElementById("submissionMsg");
     //Set with Converter
@@ -353,7 +384,8 @@ function pushToFirebase(settings){
 
 }
 
-function csvToArray(str, delimiter = ",") {
+//This function converts a CSV into an array
+function csvToDict(str, delimiter = ",") {
     // slice from start of text to the first \n index
     // use split to create an array from string by delimiter
     const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
