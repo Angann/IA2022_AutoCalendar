@@ -22,6 +22,7 @@ var step2and3 = document.getElementById('step2and3');
 var step4 = document.getElementById('step4');
 var loginDiv = document.getElementById("loginDiv");
 var inputDiv = document.getElementById("inputDiv");
+var disabledDiv = document.getElementById("disabledDiv");
 
 //Intializing Firebase
 var firebaseConfig = {
@@ -47,12 +48,16 @@ var settingConverter = {
             periodNum: settings.periodNum,
             cycleNames: settings.cycleNames,
             periodTimes: settings.periodTimes,
-            calendarCSV: settings.calendarCSV
+            calendarCSV: settings.calendarCSV,
+            step3Instructions: settings.step3Instructions,
+            step4Instructions: settings.step4Instructions,
+            password: settings.password,
+            enableSite: settings.enableSite
             };
     },
     fromFirestore: function(snapshot, options){
         const data = snapshot.data(options);
-        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV);
+        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV, data.step3Instructions, data.step4Instructions, data.password, data.enableSite);
     }
 };
 
@@ -64,6 +69,10 @@ var daysNum ;
 var cycledayNames;
 var periodTimes;
 var calendarCSV;
+var step3Instructions;
+var step4Instructions;
+var password;
+var enableSite;
 var userInputs = [];
 var userSchedule;
 var fakeUserinputs = [
@@ -89,6 +98,10 @@ db.collection("Manage").doc("settings")
     cycledayNames = settings.cycleNames;
     periodTimes = settings.periodTimes;
     calendarCSV = settings.calendarCSV;
+    step3Instructions = settings.step3Instructions;
+    step4Instructions = settings.step4Instructions;
+    password = settings.password;
+    enableSite = settings.enableSite;
     console.log("imported settings");
     createTableForm();
     } else {
@@ -115,6 +128,17 @@ function createTableForm(){
 
     tableDiv.append(table);
 
+    let step3Text = document.getElementById("step3Instructions");
+    step3Text.innerText = step3Instructions;
+
+    let step4Text = document.getElementById("step4Instructions");
+    step4Text.innerText = step4Instructions;
+
+    if(!enableSite)
+    {
+        inputDiv.style.display = 'none';
+        disabledDiv.style.display = 'block';
+    }
 }
 
 //This function creates the attributes such as input fields and headings within the input table
@@ -194,17 +218,25 @@ function initClient() {
 // Called when the signed in status changes, to update the UI appropriately. 
 // After a sign-in, the API is called.
 function updateSigninStatus(isSignedIn) {
-  if (isSignedIn) {
-    authorizeButton.style.display = 'none';
-    step1.style.display = 'none';
-    signoutButton.style.display = 'block';
-    inputDiv.style.display = 'block';
-  } else {
-    authorizeButton.style.display = 'block';
-    step1.style.display = 'block';
-    signoutButton.style.display = 'none';
-    inputDiv.style.display = 'none';
-  }
+    if(!enableSite)
+    {
+        disabledDiv.style.display = 'block';
+    }
+    else{
+        if (isSignedIn) {
+            authorizeButton.style.display = 'none';
+            step1.style.display = 'none';
+            signoutButton.style.display = 'block';
+            inputDiv.style.display = 'block';
+        }
+        else {
+            authorizeButton.style.display = 'block';
+            step1.style.display = 'block';
+            signoutButton.style.display = 'none';
+            inputDiv.style.display = 'none';
+        }
+    }
+    
 }
 
 // Sign in the user upon button click.
@@ -259,7 +291,7 @@ async function importToCalendar(schedule, checked){
                     var eventResource = {
                         'summary': schedulePeriod.className,
                         'start': {
-                            'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:000'
+                            'dateTime': dateInput + 'T' + schedulePeriod.startTime+':00+08:00'
                             },
                         'end': {
                             'dateTime': dateInput + 'T'+ schedulePeriod.endTime +':00+08:00'
@@ -275,14 +307,15 @@ async function importToCalendar(schedule, checked){
                     //request without waiting for a response from the pervious
                     //For the 4th period, the function calls an async function that 
                     //waits for the 4 total requests sent.
-                    //This is to improve the speed of the program.
-                    if(i !=scheduleDay.periods.length -1 ){
+                    //This is to improve the speed of the program (I cant figure out how to make it faster but also reliable).
+                    if(i !=scheduleDay.periods.length -1){
                         console.log("calling non wait");
                         request.execute(function(event){
                             if(event.hasOwnProperty('error'))
                             {
                                 failedRequests.push(request);
                                 console.log(event);
+                                console.log("added to failed")
                             }
                             else{
                                 console.log(event);
@@ -313,10 +346,17 @@ async function importToCalendar(schedule, checked){
                     'calendarId': calendarID,
                     'resource': eventResource
                 });
-                var result = await callRequestWait(request);
-                    if(result == "fail"){
+                request.execute(function(event){
+                    if(event.hasOwnProperty('error'))
+                    {
                         failedRequests.push(request);
+                        console.log(event);
+                        console.log("added to failed")
                     }
+                    else{
+                        console.log(event);
+                    }
+                })
             }
         }
     }
@@ -338,10 +378,10 @@ async function importToCalendar(schedule, checked){
     calendarButtonLink.style.display = "block";
     if(fail)
     {
-        step4txt.textContent = "Step4: There has been an error. Events may be missing";
+        step4txt.textContent = "Step 4: There has been an error. Events may be missing";
     }
     else{
-        step4txt.textContent = "Step4: Import complete.";
+        step4txt.textContent = "Step 4: Import complete.";
     }
     
 }
@@ -474,8 +514,12 @@ class Settings {
     cycleNames;
     periodTimes;
     calendarCSV;
+    step3Instructions;
+    step4Instructions;
+    password;
+    enableSite;
     
-    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV)
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step3Instructions, step4Instructions, password, enableSite)
     {
         this.startDate = startDate;
         this.endDate = endDate;
@@ -484,6 +528,10 @@ class Settings {
         this.cycleNames = cycleNames;
         this.periodTimes = periodTimes;
         this.calendarCSV = calendarCSV;
+        this.step3Instructions = step3Instructions;
+        this.step4Instructions = step4Instructions;
+        this.password = password;
+        this.enableSite = enableSite;
     }
 }
 

@@ -35,7 +35,7 @@
             {% csrf_token %}
             <div class = "row justify-content-center">
                 <div class = "col-8 mb-3">
-                    <label for="formFile" class="form-label">Import Cycle Day CSV File:
+                    <label for="formFile" class="form-label"><b>Import Cycle Day CSV File:</b>
                         <a href="https://drive.google.com/file/d/10TY77hzJCET8eVGBxIgavp2UCNajFqFO/view?usp=sharing">Example File</a> <br>
                         (This is not a required field if a previous file has already been uploaded) </label>
                     <input class="form-control" type="file" id="formFile" accept = ".csv">
@@ -44,36 +44,73 @@
 
             <div class="row justify-content-center">
                 <div class="col-4">
-                    <label for="startDate" class="form-label">Start Date (Inclusive)</label>
+                    <label for="startDate" class="form-label"><b>Start Date:</b> (Inclusive)</label>
                     <input type="date" class="form-control" id="startDate" required>
                 </div>
                 <div class="col-4">
-                    <label for="endDate" class="form-label">End Date (Inclusive)</label>
+                    <label for="endDate" class="form-label"><b>End Date:</b> (Inclusive)</label>
                     <input type="date" class="form-control" id="endDate" required>
                 </div>
-            </div>
+            </div><br>
 
             <div class="row justify-content-center">
                 <div class="col-4">
-                    <label for="periodNum" class="form-label">Periods in a Day</label>
+                    <label for="periodNum" class="form-label"><b>Periods in a Day:</b></label>
                     <input type="number" class="form-control" id="periodNum" placeholder="eg. 4" required>
                 </div>
                 <div class="col-4">
-                    <label for="cycleNum" class="form-label">Number of Cycle Days</label>
+                    <label for="cycleNum" class="form-label"><b>Number of Cycle Days:</b></label>
                     <input type="number" class="form-control" id="cycleNum" placeholder="eg. 8" required>
                 </div>
-            </div>
+            </div><br>
 
-            <br>
             <div class="row justify-content-center" id = "settingTables">
                 <div class="col-5" id = "periodIn">
-                    <label for="periodIn" class="form-label">Periods Times (Make sure to double check AM & PM)</label>
+                    <label for="periodIn" class="form-label"><b>Periods Times:</b> (Make sure to double check AM & PM)</label>
 
                 </div>
                 <div class="col-3" id = "cycleIn">
-                    <label for="cycleIn" class="form-label">Cycle Day Names</label>
+                    <label for="cycleIn" class="form-label"><b>Cycle Day Names:</b></label>
                 </div>
 
+            </div>
+
+            <div class = "row justify-content-center">
+                <div class="col-7 mb-3">
+                    <p> <b>For the following text inputs:</b> <br>
+                        Press enter for a new line in the text box, each new line in the text box will show up as a new line <br>
+                        Make sure not to leave any extra spaces or lines at the beginning or end </p>
+                </div>
+            </div>
+
+            <div class = "row justify-content-center">
+                <div class="col-7 mb-3">
+                    <label for="step3Instructions" class="form-label"><b>Instructions for Step 3:</b></label>
+                    <textarea class="form-control" id="step3Instructions" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class = "row justify-content-center">
+                <div class="col-7 mb-3">
+                    <label for="step4Instructions" class="form-label"><b>Instructions for Step 4:</b></label>
+                    <textarea class="form-control" id="step4Instructions" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class = "row justify-content-center">
+                <div class = "col-3 mb-3">
+                    <label for="newPswd" class = "form-label"><b>Change Password:</b></label>
+                    <input type="text" id="newPswd" class="form-control">
+                    <br>
+                </div>
+
+                <div class = "col-3">
+                    <br>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="enableSite">
+                        <label class="form-check-label" for="enableSite"><b>Enable Website for Use</b></label>
+                    </div>
+                </div>
             </div>
 
             <div class="row justify-content-center">
@@ -86,11 +123,11 @@
                     <button id = "resetButton" type="button" class="btn btn-secondary" onclick=""> Undo Changes</button>
                 </div>
             </div>
-
         </form>
+
         <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
-            <script type="module" src = "{% static 'js/manage.js' %}"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+        <script type="module" src = "{% static 'js/manage.js' %}"></script>
         <br>
     </div>
 </body>

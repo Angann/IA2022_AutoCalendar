@@ -37,9 +37,7 @@
                     </div>
                     <div style = "padding-top:30px">
                         <h3>Step 3: Import to Google Calendar</h3>
-                        <p>Clicking this button will create an event for each class according to the schedule you input above.</p>
-                        <p>The events <b>will not all show up immediately</b> and the process may take up to 30 seconds.</p>
-                        <p>Make sure to reload your calendar if events are still missing.</p>
+                        <p id="step3Instructions" style = "line-height: 250%"> </p>
                         <button id = "userSubmitButton" class="btn btn-primary" type="button" onclick="submitForm()">Import to Google Calendar</button>
                     </div>
 
@@ -48,9 +46,7 @@
             </div>
             <div class = "col-auto" id = "step4" style = "display: none">
                 <h3 id = "step4txt">Step 4: Your calendar events are being imported. Please Wait</h3>
-                <p><b>DO NOT CLOSE THIS TAB</b> while the import is completing!</p>
-                <p>The events <b>will not all show up immediately</b> and the process may take up to 30 seconds.</p>
-                <p>Make sure to reload your calendar if events are still missing.</p>
+                <p id="step4Instructions" style = "line-height: 250%"> </p>
                 <div class="spinner-border text-primary" role="status" style = "display: none; padding-top:10px" id = "loadingSpinner">
                       <span class="visually-hidden">Loading...</span>
                 </div>
@@ -60,6 +56,10 @@
         </div>
     </div>
 
+    <div id = "disabledDiv" style = "display: none ;">
+        <br>
+        <h3 class = "row justify-content-center">Use of the website is currently disabled. Sorry!</h3>
+    </div>
     <br>
 
     <div class="d-flex justify-content-center">
@@ -77,7 +77,6 @@
       onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
-
     <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
     <script type="text/javascript" src = "{% static 'js/importSchedule.js' %}"></script>

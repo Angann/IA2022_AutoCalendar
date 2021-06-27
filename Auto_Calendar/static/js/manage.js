@@ -31,12 +31,16 @@ var settingConverter = {
             periodNum: settings.periodNum,
             cycleNames: settings.cycleNames,
             periodTimes: settings.periodTimes,
-            calendarCSV: settings.calendarCSV
+            calendarCSV: settings.calendarCSV,
+            step3Instructions: settings.step3Instructions,
+            step4Instructions: settings.step4Instructions,
+            password: settings.password,
+            enableSite: settings.enableSite
             };
     },
     fromFirestore: function(snapshot, options){
         const data = snapshot.data(options);
-        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV);
+        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV, data.step3Instructions, data.step4Instructions, data.password, data.enableSite);
     }
 };
 
@@ -47,6 +51,10 @@ var periodNum;
 var daysNum ;
 var cycleDayNames;
 var periodTimes;
+var step3Instructions;
+var step4Instructions;
+var password;
+var enableSite;
 
 resetSettings(); //gets settings from Firebase
 
@@ -65,9 +73,9 @@ document.getElementById("passwordSubmit").addEventListener('click', checkPswd);
 //--------------- FUNCTIONS ---------------
 //This function check the input for the password field 
 function checkPswd() {
-    var confirmPassword = "cisadmin";
-    var password = document.getElementById("pswd").value;
-    if (password == confirmPassword) {
+    var confirmPassword = password;
+    var input = document.getElementById("pswd").value;
+    if (input == confirmPassword) {
         document.getElementById("passwordForm").style.display = "none";
         document.getElementById("settingsForm").style.display = "block";
         console.log("correct password");
@@ -226,6 +234,10 @@ async function resetSettings()
         daysNum = settings.cycleNum;
         cycleDayNames = settings.cycleNames;
         periodTimes = settings.periodTimes;
+        step3Instructions = settings.step3Instructions;
+        step4Instructions = settings.step4Instructions;
+        password = settings.password;
+        enableSite = settings.enableSite;
         initalizeTables();
         initializeFields();
         } else {
@@ -298,6 +310,17 @@ function initializeFields(){
     var cycleField = document.getElementById("cycleNum");
     cycleField.value = daysNum;
 
+    var step3Field = document.getElementById("step3Instructions");
+    step3Field.value = step3Instructions;
+
+    var step4Field = document.getElementById("step4Instructions");
+    step4Field.value = step4Instructions;
+
+    var newPasswordField = document.getElementById("newPswd");
+    newPasswordField.value = password;
+
+    var enableSiteField = document.getElementById("enableSite");
+    enableSiteField.checked = enableSite;
 }
 
 
@@ -319,6 +342,11 @@ function submitSettings(e){
     {
         cycleNames.push(document.getElementById("cycleDay-" + (j+1)).value);        
     }
+    let step3Instructions = document.getElementById("step3Instructions").value.trim();
+    let step4Instructions = document.getElementById("step4Instructions").value.trim();
+    let newPassword = document.getElementById("newPswd").value;
+    let enableSite = document.getElementById("enableSite").checked;
+
     let calendarCSV;
     const csvFile = document.getElementById("formFile");
     let submissionText = document.getElementById("submissionMsg");
@@ -333,7 +361,11 @@ function submitSettings(e){
                 "cycleNum" : cycleNum, 
                 "periodNum" : periodNum, 
                 "cycleNames" : cycleNames, 
-                "periodTimes" : periodTimes
+                "periodTimes" : periodTimes,
+                "step3Instructions" : step3Instructions,
+                "step4Instructions" : step4Instructions,
+                "password" : newPassword,
+                "enableSite" : enableSite
             }).then(result => {
                 var today = new Date();
                 var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
@@ -356,7 +388,7 @@ function submitSettings(e){
             const text = e.target.result;
             const data = csvToDict(text);
             calendarCSV = data;
-            var settings = new Settings(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV);
+            var settings = new Settings(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step3Instructions, step4Instructions, newPassword, enableSite);
             pushToFirebase(settings);
         }; 
         reader.readAsText(input);

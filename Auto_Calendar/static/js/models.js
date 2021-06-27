@@ -151,8 +151,12 @@ class Settings {
     cycleNames;
     periodTimes;
     calendarCSV;
+    step3Instructions;
+    step4Instructions;
+    password;
+    enableSite;
     
-    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV)
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step3Instructions, step4Instructions, password, enableSite)
     {
         this.startDate = startDate;
         this.endDate = endDate;
@@ -161,6 +165,10 @@ class Settings {
         this.cycleNames = cycleNames;
         this.periodTimes = periodTimes;
         this.calendarCSV = calendarCSV;
+        this.step3Instructions = step3Instructions;
+        this.step4Instructions = step4Instructions;
+        this.password = password;
+        this.enableSite = enableSite;
     }
 }
 
