@@ -151,12 +151,23 @@ class Settings {
     cycleNames;
     periodTimes;
     calendarCSV;
+    step0Heading;
+    step0Instructions;
+    step1Heading;
+    step1Instructions;
+    step1InstructionsLoggedIn;
+    step2Heading;
+    step2Instructions;
+    step3Heading;
     step3Instructions;
+    step4Heading;
     step4Instructions;
     password;
     enableSite;
     
-    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step3Instructions, step4Instructions, password, enableSite)
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step0Heading, step0Instructions, 
+        step1Heading, step1Instructions, step1InstructionsLoggedIn, step2Heading, step2Instructions, step3Heading, step3Instructions, 
+        step4Heading, step4Instructions, password, enableSite)
     {
         this.startDate = startDate;
         this.endDate = endDate;
@@ -165,7 +176,16 @@ class Settings {
         this.cycleNames = cycleNames;
         this.periodTimes = periodTimes;
         this.calendarCSV = calendarCSV;
+        this.step0Heading = step0Heading;
+        this.step0Instructions = step0Instructions;
+        this.step1Heading = step1Heading;
+        this.step1Instructions = step1Instructions;
+        this.step1InstructionsLoggedIn = step1InstructionsLoggedIn;
+        this.step2Heading = step2Heading;
+        this.step2Instructions = step2Instructions;
+        this.step3Heading = step3Heading;
         this.step3Instructions = step3Instructions;
+        this.step4Heading = step4Heading;
         this.step4Instructions = step4Instructions;
         this.password = password;
         this.enableSite = enableSite;

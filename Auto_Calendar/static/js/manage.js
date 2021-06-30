@@ -32,7 +32,16 @@ var settingConverter = {
             cycleNames: settings.cycleNames,
             periodTimes: settings.periodTimes,
             calendarCSV: settings.calendarCSV,
+            step0Heading: settings.step0Heading,
+            step0Instructions: settings.step0Instructions,
+            step1Heading: settings.step1Heading,
+            step1Instructions: settings.step1Instructions,
+            step1InstructionsLoggedIn: settings.step1InstructionsLoggedIn,
+            step2Heading: settings.step2Heading,
+            step2Instructions: settings.step2Instructions,
+            step3Heading: settings.step3Heading,
             step3Instructions: settings.step3Instructions,
+            step4Heading: settings.step4Heading,
             step4Instructions: settings.step4Instructions,
             password: settings.password,
             enableSite: settings.enableSite
@@ -40,7 +49,9 @@ var settingConverter = {
     },
     fromFirestore: function(snapshot, options){
         const data = snapshot.data(options);
-        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV, data.step3Instructions, data.step4Instructions, data.password, data.enableSite);
+        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV, 
+            data.step0Heading, data.step0Instructions, data.step1Heading, data.step1Instructions, data.step1InstructionsLoggedIn, data.step2Heading, 
+            data.step2Instructions, data.step3Heading, data.step3Instructions, data.step4Heading, data.step4Instructions, data.password, data.enableSite);
     }
 };
 
@@ -51,7 +62,16 @@ var periodNum;
 var daysNum ;
 var cycleDayNames;
 var periodTimes;
+var step0Heading;
+var step0Instructions;
+var step1Heading;
+var step1Instructions;
+var step1InstructionsLoggedIn;
+var step2Heading;
+var step2Instructions;
+var step3Heading;
 var step3Instructions;
+var step4Heading;
 var step4Instructions;
 var password;
 var enableSite;
@@ -234,7 +254,16 @@ async function resetSettings()
         daysNum = settings.cycleNum;
         cycleDayNames = settings.cycleNames;
         periodTimes = settings.periodTimes;
+        step0Heading = settings.step0Heading;
+        step0Instructions = settings.step0Instructions;
+        step1Heading = settings.step1Heading;
+        step1Instructions = settings.step1Instructions;
+        step1InstructionsLoggedIn = settings.step1InstructionsLoggedIn;
+        step2Heading = settings.step2Heading;
+        step2Instructions = settings.step2Instructions;
+        step3Heading = settings.step3Heading;
         step3Instructions = settings.step3Instructions;
+        step4Heading = settings.step4Heading;
         step4Instructions = settings.step4Instructions;
         password = settings.password;
         enableSite = settings.enableSite;
@@ -310,11 +339,38 @@ function initializeFields(){
     var cycleField = document.getElementById("cycleNum");
     cycleField.value = daysNum;
 
-    var step3Field = document.getElementById("step3Instructions");
-    step3Field.value = step3Instructions;
+    var step0HeadingField = document.getElementById("step0Heading");
+    step0HeadingField.value = step0Heading;
 
-    var step4Field = document.getElementById("step4Instructions");
-    step4Field.value = step4Instructions;
+    var step0InstructionsField = document.getElementById("step0Instructions");
+    step0InstructionsField.value = step0Instructions;
+
+    var step1HeadingField = document.getElementById("step1Heading");
+    step1HeadingField.value = step1Heading;
+
+    var step1InstructionsField = document.getElementById("step1Instructions");
+    step1InstructionsField.value = step1Instructions;
+
+    var step1InstructionsLoggedInField = document.getElementById("step1InstructionsLoggedIn");
+    step1InstructionsLoggedInField.value = step1InstructionsLoggedIn;
+
+    var step2HeadingField = document.getElementById("step2Heading");
+    step2HeadingField.value = step2Heading;
+
+    var step2InstructionsField = document.getElementById("step2Instructions");
+    step2InstructionsField.value = step2Instructions;
+
+    var step3HeadingField = document.getElementById("step3Heading");
+    step3HeadingField.value = step3Heading;
+
+    var step3InstructionsField = document.getElementById("step3Instructions");
+    step3InstructionsField.value = step3Instructions;
+
+    var step4HeadingField = document.getElementById("step4Heading");
+    step4HeadingField.value = step4Heading;
+
+    var step4InstructionsField = document.getElementById("step4Instructions");
+    step4InstructionsField.value = step4Instructions;
 
     var newPasswordField = document.getElementById("newPswd");
     newPasswordField.value = password;
@@ -342,8 +398,23 @@ function submitSettings(e){
     {
         cycleNames.push(document.getElementById("cycleDay-" + (j+1)).value);        
     }
+    
+    let step0Heading = document.getElementById("step0Heading").value.trim();
+    let step0Instructions = document.getElementById("step0Instructions").value.trim();
+
+    let step1Heading = document.getElementById("step1Heading").value.trim();
+    let step1Instructions = document.getElementById("step1Instructions").value.trim();
+    let step1InstructionsLoggedIn = document.getElementById("step1InstructionsLoggedIn").value.trim();
+
+    let step2Heading = document.getElementById("step2Heading").value.trim();
+    let step2Instructions = document.getElementById("step2Instructions").value.trim();
+
+    let step3Heading = document.getElementById("step3Heading").value.trim();
     let step3Instructions = document.getElementById("step3Instructions").value.trim();
+
+    let step4Heading = document.getElementById("step4Heading").value.trim();
     let step4Instructions = document.getElementById("step4Instructions").value.trim();
+
     let newPassword = document.getElementById("newPswd").value;
     let enableSite = document.getElementById("enableSite").checked;
 
@@ -362,7 +433,16 @@ function submitSettings(e){
                 "periodNum" : periodNum, 
                 "cycleNames" : cycleNames, 
                 "periodTimes" : periodTimes,
+                "step0Heading" : step0Heading,
+                "step0Instructions" : step0Instructions,
+                "step1Heading" : step1Heading,
+                "step1Instructions" : step1Instructions,
+                "step1InstructionsLoggedIn" : step1InstructionsLoggedIn,
+                "step2Heading" : step2Heading,
+                "step2Instructions" : step2Instructions,
+                "step3Heading" : step3Heading,
                 "step3Instructions" : step3Instructions,
+                "step4Heading" : step4Heading,
                 "step4Instructions" : step4Instructions,
                 "password" : newPassword,
                 "enableSite" : enableSite
@@ -388,7 +468,9 @@ function submitSettings(e){
             const text = e.target.result;
             const data = csvToDict(text);
             calendarCSV = data;
-            var settings = new Settings(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step3Instructions, step4Instructions, newPassword, enableSite);
+            var settings = new Settings(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step0Heading, step0Instructions, 
+                step1Heading, step1Instructions, step1InstructionLoggedIn, step2Heading, step2Instructions, step3Heading, step3Instructions, step4Heading, 
+                step4Instructions, newPassword, enableSite);
             pushToFirebase(settings);
         }; 
         reader.readAsText(input);

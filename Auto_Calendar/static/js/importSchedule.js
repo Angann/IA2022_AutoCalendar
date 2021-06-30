@@ -17,7 +17,8 @@ var SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
 var authorizeButton = document.getElementById('authorize_button');
 var signoutButton = document.getElementById('signout_button');
-var step1 = document.getElementById('step1');
+var nextButton = document.getElementById('next_button');
+var step0and1 = document.getElementById('step0and1');
 var step2and3 = document.getElementById('step2and3');
 var step4 = document.getElementById('step4');
 var loginDiv = document.getElementById("loginDiv");
@@ -49,7 +50,16 @@ var settingConverter = {
             cycleNames: settings.cycleNames,
             periodTimes: settings.periodTimes,
             calendarCSV: settings.calendarCSV,
+            step0Heading: settings.step0Heading,
+            step0Instructions: settings.step0Instructions,
+            step1Heading: settings.step1Heading,
+            step1Instructions: settings.step1Instructions,
+            step1InstructionsLoggedIn: settings.step1InstructionsLoggedIn,
+            step2Heading: settings.step2Heading,
+            step2Instructions: settings.step2Instructions,
+            step3Heading: settings.step3Heading,
             step3Instructions: settings.step3Instructions,
+            step4Heading: settings.step4Heading,
             step4Instructions: settings.step4Instructions,
             password: settings.password,
             enableSite: settings.enableSite
@@ -57,7 +67,10 @@ var settingConverter = {
     },
     fromFirestore: function(snapshot, options){
         const data = snapshot.data(options);
-        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV, data.step3Instructions, data.step4Instructions, data.password, data.enableSite);
+        return new Settings(data.startDate, data.endDate, data.cycleNum, data.periodNum, data.cycleNames, data.periodTimes, data.calendarCSV, 
+            data.step0Heading, data.step0Instructions, data.step1Heading, data.step1Instructions, data.step1InstructionsLoggedIn, 
+            data.step2Heading, data.step2Instructions, data.step3Heading, data.step3Instructions, data.step4Heading, data.step4Instructions, 
+            data.password, data.enableSite);
     }
 };
 
@@ -69,7 +82,16 @@ var daysNum ;
 var cycledayNames;
 var periodTimes;
 var calendarCSV;
+var step0Heading;
+var step0Instructions;
+var step1Heading;
+var step1Instructions;
+var step1InstructionsLoggedIn;
+var step2Heading;
+var step2Instructions;
+var step3Heading;
 var step3Instructions;
+var step4Heading;
 var step4Instructions;
 var password;
 var enableSite;
@@ -85,31 +107,6 @@ var fakeUserinputs = [
     ["7Econ", "7Econ", "7CS", "7Chem"],
     ["8Econ", "8Econ", "8CS", "8Chem"]
 ];
-
-db.collection("Manage").doc("settings")
-.withConverter(settingConverter)
-.get().then((doc) => {
-    if (doc.exists){
-    var settings = doc.data();
-    startDate = settings.startDate;
-    endDate = settings.endDate;
-    periodNum = settings.periodNum;
-    daysNum = settings.cycleNum;
-    cycledayNames = settings.cycleNames;
-    periodTimes = settings.periodTimes;
-    calendarCSV = settings.calendarCSV;
-    step3Instructions = settings.step3Instructions;
-    step4Instructions = settings.step4Instructions;
-    password = settings.password;
-    enableSite = settings.enableSite;
-    console.log("imported settings");
-    createTableForm();
-    } else {
-    console.log("No such document!");
-    }}).catch((error) => {
-    console.log("Error getting document:", error);
-});
-
 
 // -----------------------FUNCTIONS------------------------
 //This function creates a new table for user schedule inputs and calls generateTableForm
@@ -128,11 +125,38 @@ function createTableForm(){
 
     tableDiv.append(table);
 
-    let step3Text = document.getElementById("step3Instructions");
-    step3Text.innerText = step3Instructions;
+    let step0HeadingText = document.getElementById("step0Heading");
+    step0HeadingText.innerText = step0Heading;
 
-    let step4Text = document.getElementById("step4Instructions");
-    step4Text.innerText = step4Instructions;
+    let step0InstructionText = document.getElementById("step0Instructions");
+    step0InstructionText.innerText = step0Instructions;
+
+    let step1HeadingText = document.getElementById("step1Heading");
+    step1HeadingText.innerText = step1Heading;
+
+    let step1InstructionText = document.getElementById("step1Instructions");
+    step1InstructionText.innerText = step1Instructions;
+    
+    let step1InstructionLoggedInText = document.getElementById("step1InstructionsLoggedIn");
+    step1InstructionLoggedInText.innerText = step1InstructionsLoggedIn;
+
+    let step2HeadingText = document.getElementById("step2Heading");
+    step2HeadingText.innerText = step2Heading;
+
+    let step2InstructionText = document.getElementById("step2Instructions");
+    step2InstructionText.innerText = step2Instructions;
+
+    let step3HeadingText = document.getElementById("step3Heading");
+    step3HeadingText.innerText = step3Heading;
+
+    let step3InstructionText = document.getElementById("step3Instructions");
+    step3InstructionText.innerText = step3Instructions;
+
+    let step4HeadingText = document.getElementById("step4Heading");
+    step4HeadingText.innerText = step4Heading;
+
+    let step4InstructionText = document.getElementById("step4Instructions");
+    step4InstructionText.innerText = step4Instructions;
 
     if(!enableSite)
     {
@@ -202,14 +226,51 @@ function initClient() {
     discoveryDocs: DISCOVERY_DOCS,
     scope: SCOPES
   }).then(function () {
-    // Listen for sign-in state changes.
-    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
 
-    // Handle the initial sign-in state.
-    updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-    authorizeButton.onclick = handleAuthClick;
-    signoutButton.onclick = handleSignoutClick;
-    console.log("initialized client");
+    //Import Settings
+    db.collection("Manage").doc("settings")
+    .withConverter(settingConverter)
+    .get().then((doc) => {
+        if (doc.exists){
+        var settings = doc.data();
+        startDate = settings.startDate;
+        endDate = settings.endDate;
+        periodNum = settings.periodNum;
+        daysNum = settings.cycleNum;
+        cycledayNames = settings.cycleNames;
+        periodTimes = settings.periodTimes;
+        calendarCSV = settings.calendarCSV;
+        step0Heading = settings.step0Heading;
+        step0Instructions = settings.step0Instructions;
+        step1Heading = settings.step1Heading;
+        step1Instructions = settings.step1Instructions;
+        step1InstructionsLoggedIn = settings.step1InstructionsLoggedIn;
+        step2Heading = settings.step2Heading;
+        step2Instructions = settings.step2Instructions;
+        step3Heading = settings.step3Heading;
+        step3Instructions = settings.step3Instructions;
+        step4Heading = settings.step4Heading;
+        step4Instructions = settings.step4Instructions;
+        password = settings.password;
+        enableSite = settings.enableSite;
+        console.log("imported settings");
+        createTableForm();
+
+        // Listen for sign-in state changes.
+        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+        // Handle the initial sign-in state.
+        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        authorizeButton.onclick = handleAuthClick;
+        signoutButton.onclick = handleSignoutClick;
+        nextButton.onclick = handleNextClick;
+        console.log("initialized client");
+
+        } else {
+        console.log("No such document!");
+        }}).catch((error) => {
+        console.log("Error getting document:", error);
+    });
   }, function(error) {
     console.log(error);
   });
@@ -223,17 +284,25 @@ function updateSigninStatus(isSignedIn) {
         disabledDiv.style.display = 'block';
     }
     else{
+        var step1Instructions = document.getElementById('step1Instructions');
+        var step1InstructionsLoggedIn = document.getElementById('step1InstructionsLoggedIn');
+
+        step0and1.style.display = 'block';
+        inputDiv.style.display = 'none';
         if (isSignedIn) {
             authorizeButton.style.display = 'none';
-            step1.style.display = 'none';
             signoutButton.style.display = 'block';
-            inputDiv.style.display = 'block';
+            nextButton.style.display = 'block';
+            step1InstructionsLoggedIn.style.display = 'block';
+            step1Instructions.style.display = 'none';
+
         }
         else {
             authorizeButton.style.display = 'block';
-            step1.style.display = 'block';
             signoutButton.style.display = 'none';
-            inputDiv.style.display = 'none';
+            nextButton.style.display = 'none';
+            step1InstructionsLoggedIn.style.display = 'none';
+            step1Instructions.style.display = 'block';
         }
     }
     
@@ -247,6 +316,17 @@ function handleAuthClick(event) {
 // Sign out the user upon button click.
 function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
+}
+
+// Handles button click to move from step 1 to 2 and 3
+function handleNextClick(event){
+    authorizeButton.style.display = 'none';
+    step0and1.style.display = 'none';
+    signoutButton.style.display = 'block';
+    inputDiv.style.display = 'block';
+    nextButton.style.display = 'none';
+    step2and3.style.display = 'block';
+    step4.style.display = 'none';
 }
 
 //This function is called when the user clicks the 'Import' button. It takes the user's inputs and calls importToCalendar
@@ -270,9 +350,9 @@ function submitForm()
 
 //This function calls the Google Calendar API and sends requests to create the apporiate events in the user's calendar
 async function importToCalendar(schedule, checked){
-    var calendarID = "primary"; 
+    var calendarID = "c_n70juqbs6dgonp5rva067o2q2c@group.calendar.google.com"; 
     var spinner = document.getElementById("loadingSpinner");
-    var step4txt = document.getElementById("step4txt");
+    var step4Status = document.getElementById("step4Status");
     var calendarButtonLink = document.getElementById("calendarButton");
     spinner.style.display = "block";
     var failedRequests = [];
@@ -346,17 +426,12 @@ async function importToCalendar(schedule, checked){
                     'calendarId': calendarID,
                     'resource': eventResource
                 });
-                request.execute(function(event){
-                    if(event.hasOwnProperty('error'))
-                    {
-                        failedRequests.push(request);
-                        console.log(event);
-                        console.log("added to failed")
-                    }
-                    else{
-                        console.log(event);
-                    }
-                })
+                
+                console.log("calling wait");
+                var result = await callRequestWait(request);
+                if(result == "fail"){
+                    failedRequests.push(request);
+                }
             }
         }
     }
@@ -378,10 +453,10 @@ async function importToCalendar(schedule, checked){
     calendarButtonLink.style.display = "block";
     if(fail)
     {
-        step4txt.textContent = "Step 4: There has been an error. Events may be missing";
+        step4Status.textContent = "There has been an error. Events may be missing";
     }
     else{
-        step4txt.textContent = "Step 4: Import complete.";
+        step4Status.textContent = "Import complete " + String.fromCodePoint(0x2705);
     }
     
 }
@@ -514,12 +589,23 @@ class Settings {
     cycleNames;
     periodTimes;
     calendarCSV;
+    step0Heading;
+    step0Instructions;
+    step1Heading;
+    step1Instructions;
+    step1InstructionsLoggedIn;
+    step2Heading;
+    step2Instructions;
+    step3Heading;
     step3Instructions;
+    step4Heading;
     step4Instructions;
     password;
     enableSite;
     
-    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step3Instructions, step4Instructions, password, enableSite)
+    constructor(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step0Heading, step0Instructions, 
+        step1Heading, step1Instructions, step1InstructionsLoggedIn, step2Heading, step2Instructions, step3Heading, step3Instructions, 
+        step4Heading, step4Instructions, password, enableSite)
     {
         this.startDate = startDate;
         this.endDate = endDate;
@@ -528,7 +614,16 @@ class Settings {
         this.cycleNames = cycleNames;
         this.periodTimes = periodTimes;
         this.calendarCSV = calendarCSV;
+        this.step0Heading = step0Heading;
+        this.step0Instructions = step0Instructions;
+        this.step1Heading = step1Heading;
+        this.step1Instructions = step1Instructions;
+        this.step1InstructionsLoggedIn = step1InstructionsLoggedIn;
+        this.step2Heading = step2Heading;
+        this.step2Instructions = step2Instructions;
+        this.step3Heading = step3Heading;
         this.step3Instructions = step3Instructions;
+        this.step4Heading = step4Heading;
         this.step4Instructions = step4Instructions;
         this.password = password;
         this.enableSite = enableSite;
