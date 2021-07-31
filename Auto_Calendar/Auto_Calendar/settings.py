@@ -21,7 +21,7 @@ SECRET_KEY = 'uou!-hjh5cx6w%o=uyb4jv9kghsuexfr)7xev%75oc6pqfx00y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'cisautocalendar.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'cisautocalendar.herokuapp.com', 'localhost', 'ciswebprojects.cis.edu.hk/autocalendar', 'ciswebprojects.cis.edu.hk']
 
 
 # Application definition
