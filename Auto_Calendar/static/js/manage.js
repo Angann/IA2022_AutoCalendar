@@ -469,7 +469,7 @@ function submitSettings(e){
             const data = csvToDict(text);
             calendarCSV = data;
             var settings = new Settings(startDate, endDate, cycleNum, periodNum, cycleNames, periodTimes, calendarCSV, step0Heading, step0Instructions, 
-                step1Heading, step1Instructions, step1InstructionLoggedIn, step2Heading, step2Instructions, step3Heading, step3Instructions, step4Heading, 
+                step1Heading, step1Instructions, step1InstructionsLoggedIn, step2Heading, step2Instructions, step3Heading, step3Instructions, step4Heading, 
                 step4Instructions, newPassword, enableSite);
             pushToFirebase(settings);
         }; 
