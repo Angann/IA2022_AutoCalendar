@@ -350,7 +350,7 @@ function submitForm()
 
 //This function calls the Google Calendar API and sends requests to create the apporiate events in the user's calendar
 async function importToCalendar(schedule, checked){
-    var calendarID = "c_uolutphl79uduiufcslobuh05s@group.calendar.google.com"; 
+    var calendarID = "primary"; 
     var spinner = document.getElementById("loadingSpinner");
     var step4Status = document.getElementById("step4Status");
     var calendarButtonLink = document.getElementById("calendarButton");
