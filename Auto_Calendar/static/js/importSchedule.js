@@ -385,44 +385,13 @@ async function importToCalendar(schedule, checked){
                     console.log(dateInput)
                     console.log(eventResource);
 
-                    //For the first periods in the day, the function sends each 
-                    //request without waiting for a response from the pervious
-                    //For the last period, the function calls an async function that 
-                    //waits for the 4 total requests sent.
-                    //This is to improve the speed of the program (I cant figure out how to make it faster but also reliable).
-                    var send = 4;
-                    if(scheduleDay.periods[3].freePeriod){
-                        send = 3; //call wait for 3rd period
-                        if(scheduleDay.periods[2].freePeriod){
-                            send = 2; //call wait for 2rd period
-                            if(scheduleDay.periods[1].freePeriod){
-                                send = 1; //call wait for 1rd period
-                            }
-                        }
+                    
+                    console.log("calling wait");
+                    var result = await callRequestWait(request);
+                    if(result == "fail"){
+                        failedRequests.push(request);
                     }
                     
-                    console.log(send)
-                    if(false){
-                        console.log("calling non wait");
-                        request.execute(function(event){
-                            if(event.hasOwnProperty('error'))
-                            {
-                                failedRequests.push(request);
-                                console.log(event);
-                                console.log("added to failed")
-                            }
-                            else{
-                                console.log(event);
-                            }
-                        })
-                    }
-                    else{
-                        console.log("calling wait");
-                        var result = await callRequestWait(request);
-                        if(result == "fail"){
-                            failedRequests.push(request);
-                        }
-                    }
                 }
             }
             //Imports Cycle Day Events
