@@ -32,4 +32,6 @@ Admin Page:
     and their corresponding Cycle Days.
     This page is Password Protected.
 
-
+Requirements:
+    Requirements are listed in requirement.txt
+    If hosting the website locally, Anaconda may be needed to activate virtual environment – in 'venv' folder– first.
