@@ -30,7 +30,7 @@ Admin Page:
     This page is for the admin. This page allows the admins to change the CIS schedule settings including: Starting Date,
     End Date, Number of Periods in a Day, Period Start and End Times, Number of Cycle Days, Names of Cycle Days, Dates
     and their corresponding Cycle Days.
-    This page is Password Protected.
+    This page is Password Protected
 
 Requirements:
     Requirements are listed in requirement.txt
