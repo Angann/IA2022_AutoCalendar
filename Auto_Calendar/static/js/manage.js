@@ -8,13 +8,13 @@ import {Settings} from "./models.js";
 
 //Initializing Firebase
 var firebaseConfig = {
-    apiKey: "AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A",
-    authDomain: "ia2022-autocalendar.firebaseapp.com",
-    projectId: "ia2022-autocalendar",
-    storageBucket: "ia2022-autocalendar.appspot.com",
-    messagingSenderId: "1097932129420",
-    appId: "1:1097932129420:web:21fd9c663d25f4efbd67a9",
-    measurementId: "G-R853YPF8FT"
+    apiKey: System.getenv("API_KEY"),
+    authDomain: "cis-auto-calendar-app.firebaseapp.com",
+    projectId: "cis-auto-calendar-app",
+    storageBucket: "cis-auto-calendar-app.appspot.com",
+    messagingSenderId: System.getenv("messagingSenderId"),
+    appId: System.getenv("appId"),
+    measurementId: System.getenv("measurementId")
   };
 
 firebase.initializeApp(firebaseConfig);

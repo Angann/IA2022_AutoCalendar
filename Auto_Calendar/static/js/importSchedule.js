@@ -7,8 +7,8 @@
 //--------------- USER INPUT AND SCHEUDLE OBJECT CREATOR SECTION ---------------
 // Initialzing Google Calendar API
 // Client ID and API key from the Developer Console
-var CLIENT_ID = '1097932129420-mkla5e9ibr6qgok18dvn3ac3f2a4f9in.apps.googleusercontent.com';
-var API_KEY = 'AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A';
+var CLIENT_ID = System.getenv("CLIENT_ID");
+var API_KEY = System.getenv("API_KEY");
 
 // Array of API discovery doc URLs for APIs
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
@@ -27,13 +27,13 @@ var disabledDiv = document.getElementById("disabledDiv");
 
 //Intializing Firebase
 var firebaseConfig = {
-    apiKey: "AIzaSyBqafLKv1Y-SktNmuvb651BvR48UAXd96A",
-    authDomain: "ia2022-autocalendar.firebaseapp.com",
-    projectId: "ia2022-autocalendar",
-    storageBucket: "ia2022-autocalendar.appspot.com",
-    messagingSenderId: "1097932129420",
-    appId: "1:1097932129420:web:21fd9c663d25f4efbd67a9",
-    measurementId: "G-R853YPF8FT"
+    apiKey: System.getenv("API_KEY"),
+    authDomain: "cis-auto-calendar-app.firebaseapp.com",
+    projectId: "cis-auto-calendar-app",
+    storageBucket: "cis-auto-calendar-app.appspot.com",
+    messagingSenderId: System.getenv("messagingSenderId"),
+    appId: System.getenv("appId"),
+    measurementId: System.getenv("measurementId")
   };
 
 firebase.initializeApp(firebaseConfig);
