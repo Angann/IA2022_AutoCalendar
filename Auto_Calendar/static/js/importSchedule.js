@@ -8,8 +8,8 @@
 // Initialzing Google Calendar API
 // Client ID and API key from the Developer Console
 // Restricted API KEY
-var CLIENT_ID = '268287262662-senpspaanu9ou7pjoa4fph5eg8un86i0.apps.googleusercontent.com';
-var API_KEY = 'AIzaSyAYLiOsbLz2ARWVkaLSjfP_g9zkRktBEfE';
+var CLIENT_ID = '{{ settings.CLIENT_ID }}';
+var API_KEY = '{{ settings.API_KEY }}';
 
 // Array of API discovery doc URLs for APIs
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
@@ -28,7 +28,7 @@ var disabledDiv = document.getElementById("disabledDiv");
 
 //Intializing Firebase (Restricted API Key)
 var firebaseConfig = {
-    apiKey: "AIzaSyAYLiOsbLz2ARWVkaLSjfP_g9zkRktBEfE",
+    apiKey: "{{ settings.API_KEY }}",
     authDomain: "cis-auto-calendar-app.firebaseapp.com",
     projectId: "cis-auto-calendar-app",
     storageBucket: "cis-auto-calendar-app.appspot.com",

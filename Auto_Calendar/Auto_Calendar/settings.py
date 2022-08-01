@@ -10,16 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+import environ
 from pathlib import Path
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'uou!-hjh5cx6w%o=uyb4jv9kghsuexfr)7xev%75oc6pqfx00y'
+SECRET_KEY = env('SECRET_KEY')
+API_KEY = env('API_KEY')
+CLIENT_ID = env('CLIENT_ID')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'cisautocalendar.herokuapp.com', 'localhost', 'ciswebprojects.cis.edu.hk/autocalendar', 'ciswebprojects.cis.edu.hk']
 
@@ -61,9 +68,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
             ],
         },
     },
+]
+
+SETTINGS_EXPORT = [
+    'SECRET_KEY',
+    'API_KEY',
+    'CLIENT_ID'
 ]
 
 WSGI_APPLICATION = 'Auto_Calendar.wsgi.application'
