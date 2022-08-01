@@ -6,17 +6,16 @@
 
 import {Settings} from "./models.js";
 
-//Initializing Firebase
+//Initializing Firebase (Restricted API Key)
 var firebaseConfig = {
-    apiKey: process.env.API_KEY,
+    apiKey: "AIzaSyAYLiOsbLz2ARWVkaLSjfP_g9zkRktBEfE",
     authDomain: "cis-auto-calendar-app.firebaseapp.com",
     projectId: "cis-auto-calendar-app",
     storageBucket: "cis-auto-calendar-app.appspot.com",
-    messagingSenderId: process.env.MESSAGINGSENDERID,
-    appId: process.env.APPID,
-    measurementId: process.env.MEASUREMENTID
+    messagingSenderId: "268287262662",
+    appId: "1:268287262662:web:d728b761de7702df67bcc7",
+    measurementId: "G-CPM89G851L"
   };
-
 firebase.initializeApp(firebaseConfig);
 
 var db = firebase.firestore();
