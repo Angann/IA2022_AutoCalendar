@@ -7,8 +7,8 @@
 //--------------- USER INPUT AND SCHEUDLE OBJECT CREATOR SECTION ---------------
 // Initialzing Google Calendar API
 // Client ID and API key from the Developer Console
-var CLIENT_ID = System.getenv("CLIENT_ID");
-var API_KEY = System.getenv("API_KEY");
+var CLIENT_ID = process.env.CLIENT_ID;
+var API_KEY = process.env.API_KEY;
 
 // Array of API discovery doc URLs for APIs
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
@@ -27,13 +27,13 @@ var disabledDiv = document.getElementById("disabledDiv");
 
 //Intializing Firebase
 var firebaseConfig = {
-    apiKey: System.getenv("API_KEY"),
+    apiKey: process.env.API_KEY,
     authDomain: "cis-auto-calendar-app.firebaseapp.com",
     projectId: "cis-auto-calendar-app",
     storageBucket: "cis-auto-calendar-app.appspot.com",
-    messagingSenderId: System.getenv("messagingSenderId"),
-    appId: System.getenv("appId"),
-    measurementId: System.getenv("measurementId")
+    messagingSenderId: process.env.MESSAGINGSENDERID,
+    appId: process.env.APPID,
+    measurementId: process.env.MEASUREMENTID
   };
 
 firebase.initializeApp(firebaseConfig);

@@ -8,13 +8,13 @@ import {Settings} from "./models.js";
 
 //Initializing Firebase
 var firebaseConfig = {
-    apiKey: System.getenv("API_KEY"),
+    apiKey: process.env.API_KEY,
     authDomain: "cis-auto-calendar-app.firebaseapp.com",
     projectId: "cis-auto-calendar-app",
     storageBucket: "cis-auto-calendar-app.appspot.com",
-    messagingSenderId: System.getenv("messagingSenderId"),
-    appId: System.getenv("appId"),
-    measurementId: System.getenv("measurementId")
+    messagingSenderId: process.env.MESSAGINGSENDERID,
+    appId: process.env.APPID,
+    measurementId: process.env.MEASUREMENTID
   };
 
 firebase.initializeApp(firebaseConfig);
